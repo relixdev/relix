@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"errors"
 	"io"
 
@@ -59,4 +60,22 @@ func Decrypt(message []byte, senderPub PublicKey, recipientPriv PrivateKey) ([]b
 	}
 
 	return plaintext, nil
+}
+
+// SealPayload JSON-marshals a Payload and encrypts it.
+func SealPayload(p Payload, recipientPub PublicKey, senderPriv PrivateKey) ([]byte, error) {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+	return Encrypt(data, recipientPub, senderPriv)
+}
+
+// OpenPayload decrypts and JSON-unmarshals a Payload.
+func OpenPayload(ciphertext []byte, senderPub PublicKey, recipientPriv PrivateKey, out *Payload) error {
+	plaintext, err := Decrypt(ciphertext, senderPub, recipientPriv)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(plaintext, out)
 }

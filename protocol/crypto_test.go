@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"bytes"
+	"encoding/json"
 	"testing"
 )
 
@@ -113,5 +114,33 @@ func TestEncryptDecryptEmptyMessage(t *testing.T) {
 
 	if len(decrypted) != 0 {
 		t.Errorf("expected empty, got %d bytes", len(decrypted))
+	}
+}
+
+func TestSealOpenPayload(t *testing.T) {
+	alicePub, alicePriv, _ := GenerateKeyPair()
+	bobPub, bobPriv, _ := GenerateKeyPair()
+
+	payload := Payload{
+		Kind: PayloadAssistantMessage,
+		Seq:  1,
+		Data: json.RawMessage(`{"text":"Hello"}`),
+	}
+
+	sealed, err := SealPayload(payload, bobPub, alicePriv)
+	if err != nil {
+		t.Fatalf("SealPayload: %v", err)
+	}
+
+	var opened Payload
+	if err := OpenPayload(sealed, alicePub, bobPriv, &opened); err != nil {
+		t.Fatalf("OpenPayload: %v", err)
+	}
+
+	if opened.Kind != PayloadAssistantMessage {
+		t.Errorf("kind: got %q", opened.Kind)
+	}
+	if opened.Seq != 1 {
+		t.Errorf("seq: got %d", opened.Seq)
 	}
 }

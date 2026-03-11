@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/relixdev/relix/relay/internal/config"
+	"github.com/relixdev/relix/relay/internal/hub"
 	"github.com/relixdev/relix/relay/internal/server"
 )
 
@@ -15,7 +16,8 @@ func main() {
 		log.Fatalf("config: %v", err)
 	}
 
-	srv := server.New()
+	h := hub.New()
+	srv := server.New(cfg.JWTSecret, h)
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	log.Printf("relay listening on %s", addr)
 

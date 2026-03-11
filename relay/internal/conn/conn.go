@@ -36,3 +36,9 @@ func (c *Conn) WriteEnvelope(ctx context.Context, env protocol.Envelope) error {
 func (c *Conn) Close() error {
 	return c.ws.Close(websocket.StatusNormalClosure, "")
 }
+
+// CloseNow immediately closes the underlying connection without waiting for
+// a close handshake. Use this when the context is already cancelled.
+func (c *Conn) CloseNow() {
+	c.ws.CloseNow()
+}

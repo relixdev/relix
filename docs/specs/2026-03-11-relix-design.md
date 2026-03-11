@@ -8,11 +8,45 @@
 
 ## Problem
 
-Developers using AI coding CLIs (Claude Code, Aider, Codex CLI) can only interact with their sessions from the machine they started on. Walk away from your laptop and your agents are stuck — waiting for approvals, unable to receive new instructions, invisible to you.
+Developers run AI coding agents across multiple tools and machines. Each tool has its own interface, its own session model, its own approval flow. Walk away from your laptop and your agents are stuck — waiting for approvals, unable to receive new instructions, invisible to you. Even tools with built-in remote access (like Anthropic's Remote Control) only work for their own sessions and route traffic through their servers.
 
 ## Solution
 
-A React Native mobile app + lightweight agent CLI that lets you monitor and control your AI coding sessions from your phone. Anywhere, any network.
+A universal command center for all your AI coding agents. One mobile app, one dashboard, every tool, every machine. Multi-tool from day one — not a Claude Code mirror, but an agent control plane with E2E encryption, smart notifications, and cross-tool visibility.
+
+---
+
+## Competitive Landscape
+
+### Anthropic Remote Control
+
+Anthropic ships a built-in `claude remote-control` feature that connects Claude Code to claude.ai/code and the Claude mobile app. Available on all Claude plans at no extra cost.
+
+**What it does:** View and control a single Claude Code session from phone or browser. Outbound HTTPS, auto-reconnects, zero setup.
+
+**What it doesn't do:**
+
+| Gap | Relix Advantage |
+|-----|-----------------|
+| Single-tool lock-in | Relix bridges Claude Code, Cursor, Cline, Aider, Continue.dev, and future tools via `CopilotAdapter` |
+| Single-vendor lock-in | Tied to claude.ai account. Relix is tool-agnostic and vendor-agnostic |
+| No multi-machine dashboard | Per-session only. Relix shows all machines, all sessions, one view |
+| No team features | No shared visibility, team approvals, or audit trail |
+| No push notifications | No native mobile push for "approval needed" or "task complete" |
+| No offline queue | Missed approvals if phone isn't connected. Relix queues and pushes |
+| Traffic through Anthropic servers | Enterprise-sensitive. Relix relay is self-hostable with E2E encryption |
+| No E2E encryption | Decrypted at Anthropic's servers. Relix relay sees only ciphertext |
+| No automation rules | Can't auto-approve reads, alert on shell commands, block destructive ops |
+| No cross-session history | No replay, no "what happened while I was away" |
+
+### Other Tools With Remote Access
+
+No other AI coding tool (Cursor, Cline, Aider, Continue.dev, Windsurf) offers any form of mobile remote access. Relix is the only cross-tool mobile control plane.
+
+### Positioning
+
+**Not:** "Control Claude Code from your phone" (commodity — Anthropic does this for free)
+**Instead:** "Command center for all your AI coding agents"
 
 ## Products
 
@@ -40,8 +74,24 @@ Relix Agent  →  Relix Relay (Cloud)  ←  Relix Mobile
 - **All connections outbound** — agents and mobile both dial out to the relay. No port forwarding, no NAT traversal, works behind firewalls and on cellular.
 - **E2E encrypted** — relay is a dumb pipe that routes opaque encrypted blobs. Cannot read session data even if compelled.
 - **Open source relay + agent** (Bitwarden model) — self-hosters run the relay themselves, pay nothing. Builds trust with developers.
-- **Claude Code first** — agent has pluggable `CopilotAdapter` interface for future tool support (Aider, Codex CLI), but only Claude Code adapter at launch.
+- **Multi-tool from launch** — agent uses pluggable `CopilotAdapter` interface. Claude Code adapter ships first, Aider and Cline adapters follow within weeks. This is the core differentiator vs Anthropic's Remote Control.
 - **Go for everything** — agent, relay, cloud. Single language, trivial cross-compilation, excellent WebSocket/concurrency support.
+
+### Adapter Roadmap
+
+Market data as of March 2026 (sources: Stack Overflow 2025 survey, GitHub, TechCrunch, Microsoft earnings):
+
+| Priority | Tool | Market Signal | Integration Surface | Timeline |
+|----------|------|--------------|---------------------|----------|
+| **P0** | **Claude Code** | 40.8% SO survey, ~$2B ARR run-rate | Headless mode (`--input-format stream-json`), hooks, session files | Launch |
+| **P1** | **Aider** | 42K GitHub stars, 4.1M installs | Open source CLI, well-documented Python API, git-native | +2 weeks |
+| **P1** | **Cline** | 59K GitHub stars, 3.3M VS Code installs, 5M+ claimed users | Open source VS Code extension, agentic, readable state | +4 weeks |
+| **P2** | **Cursor** | 360K paying users, $2B ARR, 18% market | Closed source but VS Code fork — extension/MCP surface to research | +8 weeks |
+| **P2** | **Continue.dev** | 32K stars, 2.3M VS Code installs | Open source, pluggable architecture, enterprise self-host | +8 weeks |
+| **P3** | **GitHub Copilot** | 4.7M paid subs, 42% market share | Largest market but most closed ecosystem. Revisit with traction | TBD |
+| **P3** | **Windsurf** | ~800K devs, acquired by Cognition | Uncertain future post-acquisition. Wait and see | TBD |
+
+**Strategy:** Ship Claude Code (done), add open-source tools fast (Aider + Cline), use multi-tool narrative to differentiate, then tackle closed-source tools with established user base.
 
 ---
 
@@ -92,15 +142,38 @@ Relix Agent  →  Relix Relay (Cloud)  ←  Relix Mobile
 
 ### How the Agent Talks to Claude Code
 
-Claude Code supports a headless mode via `claude --output-format stream-json` which outputs structured JSON events to stdout and accepts input on stdin. The agent uses this as the integration point.
+Claude Code is a standalone Bun binary (~190MB) distributed for 8 platform targets (darwin-arm64, darwin-x64, linux-x64, linux-arm64, linux-x64-musl, linux-arm64-musl, win32-x64, win32-arm64). It supports bidirectional streaming via:
+
+```bash
+claude -p --input-format stream-json --output-format stream-json --verbose
+```
+
+- **Input:** JSON on stdin — `{"type":"user","message":{"role":"user","content":"..."}}`
+- **Output:** Structured JSON events on stdout (assistant messages, tool use, results, errors)
+- **Multi-turn:** `--resume <session-id>` to rejoin an existing session
+- **Session files:** `~/.claude/projects/<encoded-cwd>/<session-id>.jsonl`
+
+The agent spawns Claude Code in headless mode and holds stdin open via a pipe for continuous bidirectional communication.
 
 ### Session Discovery
 
-The agent daemon watches for Claude Code processes on the machine:
-1. Scans `/proc` (Linux) or `ps` (macOS) for running `claude` processes
-2. Checks `~/.claude/projects/` for active session state files
-3. When a new Claude Code process is detected, the agent spawns a bridge subprocess that connects to it via the headless JSON protocol
-4. If Claude Code is already running interactively (not headless), the agent monitors its session state directory for events and provides read-only forwarding to mobile
+1. Scans `~/.claude/projects/*/` for session `.jsonl` files (cross-platform, no process scanning needed)
+2. For active sessions: checks process liveness via PID files or process table
+3. New sessions spawned from mobile use headless mode with full bidirectional control
+4. Existing interactive sessions get read-only forwarding — agent tails the session `.jsonl` and forwards events to mobile
+
+### Hooks Integration
+
+Claude Code's hooks system (18+ event types) provides additional integration points:
+
+| Hook | Relix Use |
+|------|-----------|
+| `Notification` | Forward to mobile as push notification |
+| `PreToolUse` | Intercept for policy engine (auto-approve reads, block destructive ops) |
+| `Stop` | Detect session completion, notify mobile |
+| `SessionStart` / `SessionEnd` | Update session list on mobile dashboard |
+
+Hooks can be installed as shell commands or HTTP endpoints. The agent registers hooks on `relixctl start` and removes them on `relixctl stop`.
 
 ### Message Flow (Agent ↔ Claude Code)
 
@@ -108,9 +181,9 @@ The agent daemon watches for Claude Code processes on the machine:
 User types on phone
   → Mobile app encrypts message
   → Relay routes to agent
-  → Agent decrypts, writes to Claude Code stdin as JSON: {"type":"user_message","content":"..."}
-  → Claude Code processes, emits events on stdout
-  → Agent reads structured events (assistant_message, tool_use, tool_result, permission_request)
+  → Agent decrypts, writes to Claude Code stdin: {"type":"user","message":{"role":"user","content":"..."}}
+  → Claude Code processes, emits stream-json events on stdout
+  → Agent reads structured events (assistant messages, tool use, results, permission requests)
   → Agent encrypts and forwards to relay
   → Relay routes to mobile
   → Mobile decrypts and renders
@@ -129,8 +202,10 @@ User types on phone
 
 ### Limitations
 
-- If Claude Code changes its headless protocol, the agent adapter must be updated. This is our primary external dependency risk.
+- If Claude Code changes its stream-json protocol, the adapter must be updated. Mitigated by: protocol is documented, used by the Agent SDK, and unlikely to break without notice.
 - Interactive-mode sessions (non-headless) get read-only forwarding — the user can observe but not send messages. Full control requires headless mode.
+- Claude Code is a standalone Bun binary with no Node.js dependency. The agent integrates via CLI subprocess, not library import.
+- Windows support requires WSL or native win32 binary — Claude Code distributes both win32-x64 and win32-arm64 targets.
 
 ---
 
@@ -327,7 +402,7 @@ type UserInput struct {
 }
 ```
 
-Claude Code adapter is the only implementation at launch. Clean boundary for future Aider/Codex adapters.
+Claude Code adapter ships at launch. Aider and Cline adapters follow within weeks (see Adapter Roadmap above).
 
 ---
 

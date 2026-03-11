@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Relix",
+    "slug": "relix",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#007AFF"
+    },
+    "ios": {
+      "bundleIdentifier": "sh.relix.mobile",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "sh.relix.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#007AFF"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-local-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#007AFF"
+        }
+      ]
+    ]
+  }
+}

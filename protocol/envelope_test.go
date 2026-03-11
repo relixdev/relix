@@ -3,6 +3,7 @@ package protocol
 import (
 	"encoding/json"
 	"testing"
+	"time"
 )
 
 func TestEnvelopeMarshalJSON(t *testing.T) {
@@ -86,5 +87,33 @@ func TestMessageTypeConstants(t *testing.T) {
 			t.Errorf("duplicate message type: %q", mt)
 		}
 		seen[mt] = true
+	}
+}
+
+func TestNewEnvelope(t *testing.T) {
+	before := time.Now().Unix()
+	env := NewEnvelope(MsgPing, "m_test")
+	after := time.Now().Unix()
+
+	if env.V != ProtocolVersion {
+		t.Errorf("version: got %d, want %d", env.V, ProtocolVersion)
+	}
+	if env.Type != MsgPing {
+		t.Errorf("type: got %q", env.Type)
+	}
+	if env.MachineID != "m_test" {
+		t.Errorf("machine_id: got %q", env.MachineID)
+	}
+	if env.Timestamp < before || env.Timestamp > after {
+		t.Errorf("timestamp %d not in range [%d, %d]", env.Timestamp, before, after)
+	}
+}
+
+func TestEnvelopeNow(t *testing.T) {
+	env := Envelope{Timestamp: 1741689600}
+	got := env.Now()
+	want := time.Unix(1741689600, 0)
+	if !got.Equal(want) {
+		t.Errorf("Now(): got %v, want %v", got, want)
 	}
 }

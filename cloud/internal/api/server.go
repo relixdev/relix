@@ -76,6 +76,11 @@ func (s *Server) routes() {
 	// Billing routes (authenticated)
 	s.mux.Handle("GET /billing/plan", authMW(http.HandlerFunc(s.handleGetPlan)))
 	s.mux.Handle("POST /billing/checkout", authMW(http.HandlerFunc(s.handleBillingCheckout)))
+	s.mux.Handle("POST /billing/portal", authMW(http.HandlerFunc(s.handleBillingPortal)))
+	s.mux.Handle("GET /billing/subscription", authMW(http.HandlerFunc(s.handleBillingSubscription)))
+
+	// Stripe webhook (public — verified by signature)
+	s.mux.HandleFunc("POST /billing/webhook", billing.WebhookHandler(s.stripe).ServeHTTP)
 
 	// Health check
 	s.mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {

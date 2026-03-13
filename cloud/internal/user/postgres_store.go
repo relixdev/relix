@@ -21,22 +21,24 @@ func NewPostgresStore(db *sql.DB) *PostgresStore {
 
 func (s *PostgresStore) CreateUser(ctx context.Context, u *User) (*User, error) {
 	created := &User{
-		ID:        idgen.New("usr"),
-		Email:     u.Email,
-		GitHubID:  u.GitHubID,
-		Tier:      u.Tier,
-		CreatedAt: time.Now().UTC(),
+		ID:               idgen.New("usr"),
+		Email:            u.Email,
+		GitHubID:         u.GitHubID,
+		StripeCustomerID: u.StripeCustomerID,
+		Tier:             u.Tier,
+		CreatedAt:        time.Now().UTC(),
 	}
 	if created.Tier == "" {
 		created.Tier = TierFree
 	}
 
 	_, err := s.db.ExecContext(ctx,
-		`INSERT INTO users (id, email, github_id, tier, created_at)
-		 VALUES ($1, $2, $3, $4, $5)`,
+		`INSERT INTO users (id, email, github_id, stripe_customer_id, tier, created_at)
+		 VALUES ($1, $2, $3, $4, $5, $6)`,
 		created.ID,
 		nullString(created.Email),
 		nullString(created.GitHubID),
+		nullString(created.StripeCustomerID),
 		string(created.Tier),
 		created.CreatedAt,
 	)
@@ -46,26 +48,34 @@ func (s *PostgresStore) CreateUser(ctx context.Context, u *User) (*User, error) 
 	return created, nil
 }
 
+const userColumns = `id, email, github_id, stripe_customer_id, tier, created_at`
+
 func (s *PostgresStore) GetUserByID(ctx context.Context, id string) (*User, error) {
 	return s.scanUser(s.db.QueryRowContext(ctx,
-		`SELECT id, email, github_id, tier, created_at FROM users WHERE id = $1`, id))
+		`SELECT `+userColumns+` FROM users WHERE id = $1`, id))
 }
 
 func (s *PostgresStore) GetUserByEmail(ctx context.Context, email string) (*User, error) {
 	return s.scanUser(s.db.QueryRowContext(ctx,
-		`SELECT id, email, github_id, tier, created_at FROM users WHERE email = $1`, email))
+		`SELECT `+userColumns+` FROM users WHERE email = $1`, email))
 }
 
 func (s *PostgresStore) GetUserByGitHubID(ctx context.Context, githubID string) (*User, error) {
 	return s.scanUser(s.db.QueryRowContext(ctx,
-		`SELECT id, email, github_id, tier, created_at FROM users WHERE github_id = $1`, githubID))
+		`SELECT `+userColumns+` FROM users WHERE github_id = $1`, githubID))
+}
+
+func (s *PostgresStore) GetUserByStripeCustomerID(ctx context.Context, customerID string) (*User, error) {
+	return s.scanUser(s.db.QueryRowContext(ctx,
+		`SELECT `+userColumns+` FROM users WHERE stripe_customer_id = $1`, customerID))
 }
 
 func (s *PostgresStore) UpdateUser(ctx context.Context, u *User) (*User, error) {
 	result, err := s.db.ExecContext(ctx,
-		`UPDATE users SET email = $1, github_id = $2, tier = $3 WHERE id = $4`,
+		`UPDATE users SET email = $1, github_id = $2, stripe_customer_id = $3, tier = $4 WHERE id = $5`,
 		nullString(u.Email),
 		nullString(u.GitHubID),
+		nullString(u.StripeCustomerID),
 		string(u.Tier),
 		u.ID,
 	)
@@ -124,10 +134,10 @@ func (s *PostgresStore) GetSubscription(ctx context.Context, userID string) (*Su
 
 func (s *PostgresStore) scanUser(row *sql.Row) (*User, error) {
 	var u User
-	var email, githubID sql.NullString
+	var email, githubID, stripeCustomerID sql.NullString
 	var tier string
 
-	if err := row.Scan(&u.ID, &email, &githubID, &tier, &u.CreatedAt); err != nil {
+	if err := row.Scan(&u.ID, &email, &githubID, &stripeCustomerID, &tier, &u.CreatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("user not found")
 		}
@@ -135,6 +145,7 @@ func (s *PostgresStore) scanUser(row *sql.Row) (*User, error) {
 	}
 	u.Email = email.String
 	u.GitHubID = githubID.String
+	u.StripeCustomerID = stripeCustomerID.String
 	u.Tier = Tier(tier)
 	return &u, nil
 }

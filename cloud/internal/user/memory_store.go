@@ -11,20 +11,22 @@ import (
 
 // MemoryStore is an in-memory implementation of Store for development and testing.
 type MemoryStore struct {
-	mu            sync.RWMutex
-	users         map[string]*User         // id → user
-	byEmail       map[string]string        // email → id
-	byGitHubID    map[string]string        // githubID → id
-	subscriptions map[string]*Subscription // userID → subscription
+	mu                sync.RWMutex
+	users             map[string]*User         // id → user
+	byEmail           map[string]string        // email → id
+	byGitHubID        map[string]string        // githubID → id
+	byStripeCustomer  map[string]string        // stripeCustomerID → id
+	subscriptions     map[string]*Subscription // userID → subscription
 }
 
 // NewMemoryStore returns an initialised MemoryStore.
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
-		users:         make(map[string]*User),
-		byEmail:       make(map[string]string),
-		byGitHubID:    make(map[string]string),
-		subscriptions: make(map[string]*Subscription),
+		users:            make(map[string]*User),
+		byEmail:          make(map[string]string),
+		byGitHubID:       make(map[string]string),
+		byStripeCustomer: make(map[string]string),
+		subscriptions:    make(map[string]*Subscription),
 	}
 }
 
@@ -51,6 +53,9 @@ func (s *MemoryStore) CreateUser(_ context.Context, u *User) (*User, error) {
 	}
 	if copy.GitHubID != "" {
 		s.byGitHubID[copy.GitHubID] = copy.ID
+	}
+	if copy.StripeCustomerID != "" {
+		s.byStripeCustomer[copy.StripeCustomerID] = copy.ID
 	}
 	return &copy, nil
 }
@@ -88,6 +93,17 @@ func (s *MemoryStore) GetUserByGitHubID(_ context.Context, githubID string) (*Us
 	return &copy, nil
 }
 
+func (s *MemoryStore) GetUserByStripeCustomerID(_ context.Context, customerID string) (*User, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	id, ok := s.byStripeCustomer[customerID]
+	if !ok {
+		return nil, fmt.Errorf("user with Stripe customer ID %q not found", customerID)
+	}
+	copy := *s.users[id]
+	return &copy, nil
+}
+
 func (s *MemoryStore) UpdateUser(_ context.Context, u *User) (*User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -109,6 +125,13 @@ func (s *MemoryStore) UpdateUser(_ context.Context, u *User) (*User, error) {
 		delete(s.byGitHubID, existing.GitHubID)
 		if u.GitHubID != "" {
 			s.byGitHubID[u.GitHubID] = u.ID
+		}
+	}
+	// Update Stripe customer index if changed
+	if existing.StripeCustomerID != u.StripeCustomerID {
+		delete(s.byStripeCustomer, existing.StripeCustomerID)
+		if u.StripeCustomerID != "" {
+			s.byStripeCustomer[u.StripeCustomerID] = u.ID
 		}
 	}
 

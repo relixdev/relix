@@ -14,11 +14,12 @@ const (
 
 // User represents an authenticated user of the Relix platform.
 type User struct {
-	ID        string
-	Email     string
-	GitHubID  string
-	Tier      Tier
-	CreatedAt time.Time
+	ID               string
+	Email            string
+	GitHubID         string
+	StripeCustomerID string
+	Tier             Tier
+	CreatedAt        time.Time
 }
 
 // Machine represents a registered developer machine belonging to a user.

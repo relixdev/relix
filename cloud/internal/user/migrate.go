@@ -36,6 +36,8 @@ func Migrate(db *sql.DB) error {
 			tier       TEXT NOT NULL DEFAULT 'free',
 			expires_at TIMESTAMPTZ NOT NULL
 		)`,
+		// Add stripe_customer_id to users if not already present.
+		`ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT UNIQUE`,
 	}
 	for i, stmt := range stmts {
 		if _, err := db.Exec(stmt); err != nil {

@@ -46,3 +46,37 @@ func (s *Server) handleBillingCheckout(w http.ResponseWriter, r *http.Request) {
 		"checkout_url": session.CheckoutURL,
 	})
 }
+
+func (s *Server) handleBillingPortal(w http.ResponseWriter, r *http.Request) {
+	userID := auth.UserIDFromContext(r.Context())
+
+	portal, err := s.stripe.CreatePortalSession(r.Context(), userID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "portal session failed")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{
+		"url": portal.URL,
+	})
+}
+
+func (s *Server) handleBillingSubscription(w http.ResponseWriter, r *http.Request) {
+	userID := auth.UserIDFromContext(r.Context())
+
+	details, err := s.stripe.GetSubscriptionDetails(r.Context(), userID)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "subscription lookup failed")
+		return
+	}
+	if details == nil {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"subscription": nil,
+			"tier":         "free",
+		})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"subscription": details,
+		"tier":         details.Tier,
+	})
+}

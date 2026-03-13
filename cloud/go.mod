@@ -9,4 +9,6 @@ require (
 
 require github.com/lib/pq v1.11.2
 
+require github.com/stripe/stripe-go/v76 v76.25.0
+
 replace github.com/relixdev/protocol => ../protocol

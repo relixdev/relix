@@ -7,13 +7,14 @@ import (
 
 // Config holds all environment-driven configuration for the cloud service.
 type Config struct {
-	Port               string
-	DatabaseURL        string
-	RedisURL           string
-	JWTSecret          string
-	GitHubClientID     string
-	GitHubClientSecret string
-	StripeSecretKey    string
+	Port                string
+	DatabaseURL         string
+	RedisURL            string
+	JWTSecret           string
+	GitHubClientID      string
+	GitHubClientSecret  string
+	StripeSecretKey     string
+	StripeWebhookSecret string
 }
 
 // Load reads configuration from environment variables. Required fields cause an
@@ -26,7 +27,8 @@ func Load() (*Config, error) {
 		JWTSecret:          os.Getenv("JWT_SECRET"),
 		GitHubClientID:     os.Getenv("GITHUB_CLIENT_ID"),
 		GitHubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-		StripeSecretKey:    os.Getenv("STRIPE_SECRET_KEY"),
+		StripeSecretKey:     os.Getenv("STRIPE_SECRET_KEY"),
+		StripeWebhookSecret: os.Getenv("STRIPE_WEBHOOK_SECRET"),
 	}
 
 	if cfg.JWTSecret == "" {

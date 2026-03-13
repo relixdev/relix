@@ -16,6 +16,9 @@ type Store interface {
 	// GetUserByGitHubID retrieves a user by their GitHub user ID.
 	GetUserByGitHubID(ctx context.Context, githubID string) (*User, error)
 
+	// GetUserByStripeCustomerID retrieves a user by their Stripe customer ID.
+	GetUserByStripeCustomerID(ctx context.Context, customerID string) (*User, error)
+
 	// UpdateUser persists changes to an existing user.
 	UpdateUser(ctx context.Context, u *User) (*User, error)
 

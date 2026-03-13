@@ -1,0 +1,334 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773423701098,
+  "projectRoot": "/Users/zach/AI/OpenClaw/Shadow/channels/relix/repo",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "cloud": {
+      "path": "cloud",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1773423701091,
+      "keyFiles": [
+        "Makefile",
+        "go.mod",
+        "go.sum"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 7,
+      "lastAccessed": 1773423701091,
+      "keyFiles": [
+        "API.md",
+        "DEPLOYMENT.md",
+        "DEVELOPMENT.md",
+        "GO-TO-MARKET.md",
+        "HANDOFF.md"
+      ]
+    },
+    "mobile": {
+      "path": "mobile",
+      "purpose": null,
+      "fileCount": 9,
+      "lastAccessed": 1773423701091,
+      "keyFiles": [
+        "App.tsx",
+        "app.json",
+        "eas.json",
+        "index.ts",
+        "jest.config.js"
+      ]
+    },
+    "protocol": {
+      "path": "protocol",
+      "purpose": null,
+      "fileCount": 12,
+      "lastAccessed": 1773423701091,
+      "keyFiles": [
+        "adapter.go",
+        "adapter_test.go",
+        "crypto.go",
+        "crypto_test.go",
+        "envelope.go"
+      ]
+    },
+    "relay": {
+      "path": "relay",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "Dockerfile",
+        "Makefile",
+        "docker-compose.yml",
+        "go.mod",
+        "go.sum"
+      ]
+    },
+    "relixctl": {
+      "path": "relixctl",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "Makefile",
+        "go.mod",
+        "go.sum",
+        "main.go"
+      ]
+    },
+    "mobile/app": {
+      "path": "mobile/app",
+      "purpose": "Application code",
+      "fileCount": 3,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "_layout.tsx",
+        "pairing.tsx",
+        "sas-verification.tsx"
+      ]
+    },
+    "mobile/assets": {
+      "path": "mobile/assets",
+      "purpose": "Static assets",
+      "fileCount": 6,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "android-icon-background.png",
+        "android-icon-foreground.png",
+        "android-icon-monochrome.png"
+      ]
+    },
+    "mobile/components": {
+      "path": "mobile/components",
+      "purpose": "UI components",
+      "fileCount": 7,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "ApprovalCard.tsx",
+        "ChatMessage.tsx",
+        "MachineCard.tsx"
+      ]
+    },
+    "mobile/lib": {
+      "path": "mobile/lib",
+      "purpose": "Library code",
+      "fileCount": 8,
+      "lastAccessed": 1773423701092,
+      "keyFiles": [
+        "api.ts",
+        "crypto.ts",
+        "navigationRef.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "cloud/internal/user/postgres_store.go",
+      "accessCount": 5,
+      "lastAccessed": 1773433866906,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user/memory_store.go",
+      "accessCount": 5,
+      "lastAccessed": 1773433891249,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/config/config.go",
+      "accessCount": 4,
+      "lastAccessed": 1773433999212,
+      "type": "file"
+    },
+    {
+      "path": "cloud/cmd/cloud/main.go",
+      "accessCount": 4,
+      "lastAccessed": 1773434007975,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user/models.go",
+      "accessCount": 3,
+      "lastAccessed": 1773433826654,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user/store.go",
+      "accessCount": 3,
+      "lastAccessed": 1773433832020,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user/migrate.go",
+      "accessCount": 3,
+      "lastAccessed": 1773433837757,
+      "type": "file"
+    },
+    {
+      "path": "docs/HANDOFF.md",
+      "accessCount": 2,
+      "lastAccessed": 1773433748531,
+      "type": "file"
+    },
+    {
+      "path": "cloud/go.mod",
+      "accessCount": 2,
+      "lastAccessed": 1773433754883,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user",
+      "accessCount": 2,
+      "lastAccessed": 1773433757275,
+      "type": "directory"
+    },
+    {
+      "path": "cloud/internal/billing/stripe.go",
+      "accessCount": 2,
+      "lastAccessed": 1773433955779,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/api/billing_handlers.go",
+      "accessCount": 2,
+      "lastAccessed": 1773433977066,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/api/server.go",
+      "accessCount": 2,
+      "lastAccessed": 1773433983591,
+      "type": "file"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "accessCount": 1,
+      "lastAccessed": 1773423705748,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/machine/registry.go",
+      "accessCount": 1,
+      "lastAccessed": 1773423711640,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/idgen/idgen.go",
+      "accessCount": 1,
+      "lastAccessed": 1773423712993,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/001_create_users.up.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423725052,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/001_create_users.down.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423725911,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/002_create_machines.up.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423727294,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/002_create_machines.down.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423727681,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/003_create_push_tokens.up.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423729039,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/003_create_push_tokens.down.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423729880,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/004_create_subscriptions.up.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423730843,
+      "type": "file"
+    },
+    {
+      "path": "cloud/migrations/004_create_subscriptions.down.sql",
+      "accessCount": 1,
+      "lastAccessed": 1773423731739,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/user/postgres_store_test.go",
+      "accessCount": 1,
+      "lastAccessed": 1773423768388,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/billing/plans.go",
+      "accessCount": 1,
+      "lastAccessed": 1773433755340,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/auth/jwt.go",
+      "accessCount": 1,
+      "lastAccessed": 1773433762007,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/auth/middleware.go",
+      "accessCount": 1,
+      "lastAccessed": 1773433770967,
+      "type": "file"
+    },
+    {
+      "path": "cloud/go.sum",
+      "accessCount": 1,
+      "lastAccessed": 1773433771110,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

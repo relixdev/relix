@@ -113,13 +113,17 @@ When you face a decision with no clear answer:
 
 Your persistent memory lives in a **dedicated repo**: `github.com/zachforsyth/shadow`
 
-- Clone it alongside project repos: `~/work/shadow/`
-- Read `MEMORY.md` at the start of every session
-- Read `projects/[current-project]/status.md` for current focus
-- Use qmd for fast semantic search across all memory files
-- See the README at `github.com/zachforsyth/shadow` for the full system design
+**Every session:**
+1. `cd ~/work && git -C shadow pull` (or `git clone https://github.com/zachforsyth/shadow.git` on first run)
+2. Read `~/work/shadow/MEMORY.md` — your curated index
+3. Read `~/work/shadow/projects/[current-project]/status.md` — current focus + blockers
+4. Use qmd for fast semantic search across all memory files
 
-**First run:** Follow the bootstrap instructions in the shadow repo README.
+**Before ending any session:**
+1. Update status.md, metrics.md, etc. as needed
+2. `cd ~/work/shadow && git add -A && git commit -m "memory: [what changed]" && git push`
+
+**Full system docs:** See the README in the shadow repo itself.
 
 ## Progress Tracking
 

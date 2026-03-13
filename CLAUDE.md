@@ -109,12 +109,24 @@ When you face a decision with no clear answer:
 5. **Favor users** — when in doubt, do what's best for the developer using Relix
 6. **Default to open source** — if a component doesn't need to be proprietary, open source it
 
+## Memory System
+
+Your persistent memory lives in a **dedicated repo**: `github.com/zachforsyth/shadow`
+
+- Clone it alongside project repos: `~/work/shadow/`
+- Read `MEMORY.md` at the start of every session
+- Read `projects/[current-project]/status.md` for current focus
+- Use qmd for fast semantic search across all memory files
+- See the README at `github.com/zachforsyth/shadow` for the full system design
+
+**First run:** Follow the bootstrap instructions in the shadow repo README.
+
 ## Progress Tracking
 
 - Use GitHub Issues for all work items
 - Use GitHub Milestones for phases: `alpha`, `beta`, `v1.0`, `growth`
 - Post a weekly status update as a GitHub Discussion in the repo
-- Track metrics in a `metrics/` directory (or a dashboard if you set one up)
+- Track metrics in `shadow/projects/[project]/metrics.md`
 
 ## Architecture Contracts (DO NOT BREAK)
 

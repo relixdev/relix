@@ -7,4 +7,6 @@ require (
 	golang.org/x/crypto v0.31.0
 )
 
+require github.com/lib/pq v1.11.2
+
 replace github.com/relixdev/protocol => ../protocol

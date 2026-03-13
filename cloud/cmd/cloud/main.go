@@ -1,9 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/lib/pq"
 
 	"github.com/relixdev/relix/cloud/internal/api"
 	"github.com/relixdev/relix/cloud/internal/auth"
@@ -20,7 +23,26 @@ func main() {
 		log.Fatalf("config: %v", err)
 	}
 
-	store := user.NewMemoryStore()
+	var store user.Store
+	if cfg.DatabaseURL != "" {
+		db, err := sql.Open("postgres", cfg.DatabaseURL)
+		if err != nil {
+			log.Fatalf("postgres open: %v", err)
+		}
+		defer db.Close()
+		if err := db.Ping(); err != nil {
+			log.Fatalf("postgres ping: %v", err)
+		}
+		if err := user.Migrate(db); err != nil {
+			log.Fatalf("postgres migrate: %v", err)
+		}
+		store = user.NewPostgresStore(db)
+		log.Printf("using PostgreSQL user store")
+	} else {
+		store = user.NewMemoryStore()
+		log.Printf("using in-memory user store (set DATABASE_URL for PostgreSQL)")
+	}
+
 	tokens := auth.NewTokenService(cfg.JWTSecret)
 	reg := machine.NewRegistry(store)
 

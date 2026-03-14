@@ -10,7 +10,8 @@ import (
 	"github.com/relixdev/relix/relixctl/internal/crypto"
 )
 
-const version = "0.1.0"
+// version is set via ldflags at build time by Goreleaser.
+var version = "dev"
 
 // RootCmd wraps cobra.Command so callers can set output for testing.
 type RootCmd struct {

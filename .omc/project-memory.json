@@ -175,6 +175,18 @@
       "type": "directory"
     },
     {
+      "path": "relixctl/cmd/daemonrun.go",
+      "accessCount": 2,
+      "lastAccessed": 1773515617185,
+      "type": "file"
+    },
+    {
+      "path": "docs/GO-TO-MARKET.md",
+      "accessCount": 2,
+      "lastAccessed": 1773516344519,
+      "type": "file"
+    },
+    {
       "path": "docs/HANDOFF.md",
       "accessCount": 1,
       "lastAccessed": 1773514866504,
@@ -262,12 +274,6 @@
       "path": "mobile/lib/crypto.ts",
       "accessCount": 1,
       "lastAccessed": 1773514877934,
-      "type": "file"
-    },
-    {
-      "path": "docs/GO-TO-MARKET.md",
-      "accessCount": 1,
-      "lastAccessed": 1773514883301,
       "type": "file"
     },
     {
@@ -400,6 +406,66 @@
       "path": "landing/terms.html",
       "accessCount": 1,
       "lastAccessed": 1773515175298,
+      "type": "file"
+    },
+    {
+      "path": "protocol/adapter.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515492711,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/adapter/claudecode.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515493150,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/adapter/discovery.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515493434,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/adapter/claudecode_test.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515498560,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/daemon/daemon.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515498735,
+      "type": "file"
+    },
+    {
+      "path": "protocol/messages.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515506782,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/adapter/aider.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515544021,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/adapter/aider_test.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515586345,
+      "type": "file"
+    },
+    {
+      "path": "relixctl",
+      "accessCount": 1,
+      "lastAccessed": 1773515593236,
+      "type": "directory"
+    },
+    {
+      "path": "relixctl/cmd/helpers.go",
+      "accessCount": 1,
+      "lastAccessed": 1773515596703,
       "type": "file"
     }
   ],

@@ -1,0 +1,63 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: relixctl
+    main: ./relixctl
+    binary: relixctl
+    ldflags:
+      - -s -w
+      - -X github.com/relixdev/relix/relixctl/cmd.version={{.Version}}
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: relixctl
+    builds:
+      - relixctl
+    format: tar.gz
+    name_template: "relixctl_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  github:
+    owner: relixdev
+    name: relix
+  prerelease: auto
+
+brews:
+  - name: relixctl
+    repository:
+      owner: relixdev
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://relix.sh"
+    description: "Relix agent CLI — universal command center for AI coding agents"
+    license: "MIT"
+    install: |
+      bin.install "relixctl"
+    test: |
+      system "#{bin}/relixctl", "--version"

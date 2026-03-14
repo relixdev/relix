@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1773423701098,
+  "lastScanned": 1773514861701,
   "projectRoot": "/Users/zach/AI/OpenClaw/Shadow/channels/relix/repo",
   "techStack": {
     "languages": [],
@@ -37,10 +37,12 @@
     "cloud": {
       "path": "cloud",
       "purpose": null,
-      "fileCount": 3,
-      "lastAccessed": 1773423701091,
+      "fileCount": 5,
+      "lastAccessed": 1773514861694,
       "keyFiles": [
+        "Dockerfile.fly",
         "Makefile",
+        "fly.toml",
         "go.mod",
         "go.sum"
       ]
@@ -48,8 +50,8 @@
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 7,
-      "lastAccessed": 1773423701091,
+      "fileCount": 9,
+      "lastAccessed": 1773514861694,
       "keyFiles": [
         "API.md",
         "DEPLOYMENT.md",
@@ -62,7 +64,7 @@
       "path": "mobile",
       "purpose": null,
       "fileCount": 9,
-      "lastAccessed": 1773423701091,
+      "lastAccessed": 1773514861694,
       "keyFiles": [
         "App.tsx",
         "app.json",
@@ -75,7 +77,7 @@
       "path": "protocol",
       "purpose": null,
       "fileCount": 12,
-      "lastAccessed": 1773423701091,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "adapter.go",
         "adapter_test.go",
@@ -87,21 +89,21 @@
     "relay": {
       "path": "relay",
       "purpose": null,
-      "fileCount": 6,
-      "lastAccessed": 1773423701092,
+      "fileCount": 8,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "Dockerfile",
+        "Dockerfile.fly",
         "Makefile",
         "docker-compose.yml",
-        "go.mod",
-        "go.sum"
+        "fly.toml"
       ]
     },
     "relixctl": {
       "path": "relixctl",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1773423701092,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "Makefile",
         "go.mod",
@@ -109,11 +111,22 @@
         "main.go"
       ]
     },
+    "cloud/migrations": {
+      "path": "cloud/migrations",
+      "purpose": "Database migrations",
+      "fileCount": 8,
+      "lastAccessed": 1773514861695,
+      "keyFiles": [
+        "001_create_users.down.sql",
+        "001_create_users.up.sql",
+        "002_create_machines.down.sql"
+      ]
+    },
     "mobile/app": {
       "path": "mobile/app",
       "purpose": "Application code",
       "fileCount": 3,
-      "lastAccessed": 1773423701092,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "_layout.tsx",
         "pairing.tsx",
@@ -124,7 +137,7 @@
       "path": "mobile/assets",
       "purpose": "Static assets",
       "fileCount": 6,
-      "lastAccessed": 1773423701092,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "android-icon-background.png",
         "android-icon-foreground.png",
@@ -135,7 +148,7 @@
       "path": "mobile/components",
       "purpose": "UI components",
       "fileCount": 7,
-      "lastAccessed": 1773423701092,
+      "lastAccessed": 1773514861695,
       "keyFiles": [
         "ApprovalCard.tsx",
         "ChatMessage.tsx",
@@ -146,7 +159,7 @@
       "path": "mobile/lib",
       "purpose": "Library code",
       "fileCount": 8,
-      "lastAccessed": 1773423701092,
+      "lastAccessed": 1773514861696,
       "keyFiles": [
         "api.ts",
         "crypto.ts",
@@ -156,303 +169,237 @@
   },
   "hotPaths": [
     {
-      "path": "cloud/internal/user/postgres_store.go",
-      "accessCount": 5,
-      "lastAccessed": 1773433866906,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/user/memory_store.go",
-      "accessCount": 5,
-      "lastAccessed": 1773433891249,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/config/config.go",
-      "accessCount": 4,
-      "lastAccessed": 1773433999212,
-      "type": "file"
-    },
-    {
-      "path": "cloud/cmd/cloud/main.go",
-      "accessCount": 4,
-      "lastAccessed": 1773434007975,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/user/models.go",
+      "path": "",
       "accessCount": 3,
-      "lastAccessed": 1773433826654,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/user/store.go",
-      "accessCount": 3,
-      "lastAccessed": 1773433832020,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/user/migrate.go",
-      "accessCount": 3,
-      "lastAccessed": 1773433837757,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/api/server.go",
-      "accessCount": 3,
-      "lastAccessed": 1773500990434,
-      "type": "file"
-    },
-    {
-      "path": "docs/HANDOFF.md",
-      "accessCount": 2,
-      "lastAccessed": 1773433748531,
-      "type": "file"
-    },
-    {
-      "path": "cloud/go.mod",
-      "accessCount": 2,
-      "lastAccessed": 1773433754883,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/user",
-      "accessCount": 2,
-      "lastAccessed": 1773433757275,
+      "lastAccessed": 1773515038191,
       "type": "directory"
     },
     {
-      "path": "cloud/internal/billing/stripe.go",
-      "accessCount": 2,
-      "lastAccessed": 1773433955779,
-      "type": "file"
-    },
-    {
-      "path": "cloud/internal/api/billing_handlers.go",
-      "accessCount": 2,
-      "lastAccessed": 1773433977066,
-      "type": "file"
-    },
-    {
-      "path": "docs/PRD.md",
-      "accessCount": 2,
-      "lastAccessed": 1773500971015,
-      "type": "file"
-    },
-    {
-      "path": "relixctl/cmd/login.go",
-      "accessCount": 2,
-      "lastAccessed": 1773501065815,
-      "type": "file"
-    },
-    {
-      "path": "relixctl/cmd/root.go",
-      "accessCount": 2,
-      "lastAccessed": 1773501083826,
-      "type": "file"
-    },
-    {
-      "path": "docs/legal/PRIVACY-POLICY.md",
-      "accessCount": 2,
-      "lastAccessed": 1773501180788,
-      "type": "file"
-    },
-    {
-      "path": "docs/legal/TERMS-OF-SERVICE.md",
-      "accessCount": 2,
-      "lastAccessed": 1773501234187,
-      "type": "file"
-    },
-    {
-      "path": "docs/legal/REFUND-POLICY.md",
-      "accessCount": 2,
-      "lastAccessed": 1773501242972,
-      "type": "file"
-    },
-    {
-      "path": "docs/DEPLOYMENT.md",
+      "path": "docs/HANDOFF.md",
       "accessCount": 1,
-      "lastAccessed": 1773423705748,
+      "lastAccessed": 1773514866504,
       "type": "file"
     },
     {
-      "path": "cloud/internal/machine/registry.go",
+      "path": "mobile/App.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423711640,
+      "lastAccessed": 1773514867241,
       "type": "file"
     },
     {
-      "path": "cloud/internal/idgen/idgen.go",
+      "path": "mobile/app/_layout.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423712993,
+      "lastAccessed": 1773514867630,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/001_create_users.up.sql",
+      "path": "mobile/app/(tabs)/index.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423725052,
+      "lastAccessed": 1773514868079,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/001_create_users.down.sql",
+      "path": "mobile/app/(tabs)/settings.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423725911,
+      "lastAccessed": 1773514868474,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/002_create_machines.up.sql",
+      "path": "mobile/app/(auth)/login.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423727294,
+      "lastAccessed": 1773514869062,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/002_create_machines.down.sql",
+      "path": "mobile/app/(auth)/onboarding.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423727681,
+      "lastAccessed": 1773514869116,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/003_create_push_tokens.up.sql",
+      "path": "mobile/app/pairing.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423729039,
+      "lastAccessed": 1773514874459,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/003_create_push_tokens.down.sql",
+      "path": "mobile/app/session/[id].tsx",
       "accessCount": 1,
-      "lastAccessed": 1773423729880,
+      "lastAccessed": 1773514874937,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/004_create_subscriptions.up.sql",
+      "path": "mobile/stores/authStore.ts",
       "accessCount": 1,
-      "lastAccessed": 1773423730843,
+      "lastAccessed": 1773514875835,
       "type": "file"
     },
     {
-      "path": "cloud/migrations/004_create_subscriptions.down.sql",
+      "path": "mobile/stores/sessionStore.ts",
       "accessCount": 1,
-      "lastAccessed": 1773423731739,
+      "lastAccessed": 1773514876320,
       "type": "file"
     },
     {
-      "path": "cloud/internal/user/postgres_store_test.go",
+      "path": "mobile/stores/machineStore.ts",
       "accessCount": 1,
-      "lastAccessed": 1773423768388,
+      "lastAccessed": 1773514876923,
       "type": "file"
     },
     {
-      "path": "cloud/internal/billing/plans.go",
+      "path": "mobile/lib/api.ts",
       "accessCount": 1,
-      "lastAccessed": 1773433755340,
+      "lastAccessed": 1773514877264,
       "type": "file"
     },
     {
-      "path": "cloud/internal/auth/jwt.go",
+      "path": "mobile/lib/relay.ts",
       "accessCount": 1,
-      "lastAccessed": 1773433762007,
+      "lastAccessed": 1773514877744,
       "type": "file"
     },
     {
-      "path": "cloud/internal/auth/middleware.go",
+      "path": "mobile/lib/crypto.ts",
       "accessCount": 1,
-      "lastAccessed": 1773433770967,
-      "type": "file"
-    },
-    {
-      "path": "cloud/go.sum",
-      "accessCount": 1,
-      "lastAccessed": 1773433771110,
+      "lastAccessed": 1773514877934,
       "type": "file"
     },
     {
       "path": "docs/GO-TO-MARKET.md",
       "accessCount": 1,
-      "lastAccessed": 1773500963872,
+      "lastAccessed": 1773514883301,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/auth/oauth.go",
+      "path": "docs/legal/PRIVACY-POLICY.md",
       "accessCount": 1,
-      "lastAccessed": 1773500982733,
+      "lastAccessed": 1773514883504,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/auth/devicecode.go",
+      "path": "mobile/lib/protocol.ts",
       "accessCount": 1,
-      "lastAccessed": 1773500983176,
+      "lastAccessed": 1773514883612,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/auth/pairing.go",
+      "path": "docs/legal/TERMS-OF-SERVICE.md",
       "accessCount": 1,
-      "lastAccessed": 1773500983752,
+      "lastAccessed": 1773514883917,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/auth/refresh.go",
+      "path": "mobile/lib/navigationRef.ts",
       "accessCount": 1,
-      "lastAccessed": 1773500984061,
+      "lastAccessed": 1773514884114,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/config/config.go",
+      "path": "mobile/lib/notifications.ts",
       "accessCount": 1,
-      "lastAccessed": 1773500984378,
+      "lastAccessed": 1773514884522,
       "type": "file"
     },
     {
-      "path": "cloud/internal/api/auth_handlers.go",
+      "path": "mobile/app/(tabs)/_layout.tsx",
       "accessCount": 1,
-      "lastAccessed": 1773500990100,
+      "lastAccessed": 1773514885471,
+      "type": "file"
+    },
+    {
+      "path": "mobile/app/sas-verification.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514885803,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/ApprovalCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514891121,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/ChatMessage.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514891992,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/MachineCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514892387,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/ToolCallCard.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514892869,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/SessionToggle.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514893558,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/TerminalView.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514893723,
+      "type": "file"
+    },
+    {
+      "path": "mobile/components/SASVerification.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1773514894146,
+      "type": "file"
+    },
+    {
+      "path": "mobile/lib/sas.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773514900032,
+      "type": "file"
+    },
+    {
+      "path": "mobile/tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1773514900509,
+      "type": "file"
+    },
+    {
+      "path": "mobile/package.json",
+      "accessCount": 1,
+      "lastAccessed": 1773514900980,
       "type": "file"
     },
     {
       "path": "docs/API.md",
       "accessCount": 1,
-      "lastAccessed": 1773500990664,
+      "lastAccessed": 1773514901420,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/crypto/keystore.go",
+      "path": "landing/styles.css",
       "accessCount": 1,
-      "lastAccessed": 1773500996087,
+      "lastAccessed": 1773514990925,
       "type": "file"
     },
     {
-      "path": "relixctl/cmd/root_test.go",
+      "path": "landing/index.html",
       "accessCount": 1,
-      "lastAccessed": 1773501000356,
+      "lastAccessed": 1773515062201,
       "type": "file"
     },
     {
-      "path": "relixctl/internal/relay/client.go",
+      "path": "landing/privacy.html",
       "accessCount": 1,
-      "lastAccessed": 1773501000815,
+      "lastAccessed": 1773515113500,
       "type": "file"
     },
     {
-      "path": "relixctl/cmd/status_test.go",
+      "path": "landing/terms.html",
       "accessCount": 1,
-      "lastAccessed": 1773501001084,
-      "type": "file"
-    },
-    {
-      "path": "relixctl/cmd/status.go",
-      "accessCount": 1,
-      "lastAccessed": 1773501011245,
-      "type": "file"
-    },
-    {
-      "path": "relixctl/cmd/pair.go",
-      "accessCount": 1,
-      "lastAccessed": 1773501077569,
-      "type": "file"
-    },
-    {
-      "path": "docs/MARKETING-PLAN.md",
-      "accessCount": 1,
-      "lastAccessed": 1773501317932,
+      "lastAccessed": 1773515175298,
       "type": "file"
     }
   ],

@@ -9,12 +9,15 @@ import { useAuthStore } from '../stores/authStore';
 import { useMachineStore } from '../stores/machineStore';
 import { useSessionStore } from '../stores/sessionStore';
 import { RelayClient } from '../lib/relay';
+import { getOrCreateKeyPair, fromBase64, initCrypto } from '../lib/crypto';
+import { getRelayWsUrl } from '../lib/api';
+import { loadPeerKey } from './sas-verification';
 import {
   configureNotificationHandler,
   registerForPushNotifications,
   subscribeToNotificationResponses,
 } from '../lib/notifications';
-import type { Envelope } from '../lib/protocol';
+import type { Envelope, Payload } from '../lib/protocol';
 import LoginScreen from './(auth)/login';
 import OnboardingScreen from './(auth)/onboarding';
 import PairingScreen from './pairing';
@@ -23,7 +26,7 @@ import TabsLayout from './(tabs)/_layout';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const RELAY_URL = 'wss://relay.relix.sh/v1/ws';
+const RELAY_URL = getRelayWsUrl();
 
 // How long (ms) the app can be backgrounded before requiring biometric re-auth
 const LOCK_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
@@ -34,7 +37,7 @@ configureNotificationHandler();
 export default function RootLayout() {
   const { token, isLoading, loadToken } = useAuthStore();
   const { machines, fetchMachines, updateMachineStatus, addApproval } = useMachineStore();
-  const { addEvent, clearSession } = useSessionStore();
+  const { addSessionEvent, clearSession } = useSessionStore();
   const relayRef = useRef<RelayClient | null>(null);
 
   // Biometric / lock state
@@ -45,6 +48,7 @@ export default function RootLayout() {
   // Load persisted token on mount
   useEffect(() => {
     loadToken();
+    initCrypto().catch(() => {});
   }, []);
 
   // Check biometric availability once
@@ -80,7 +84,6 @@ export default function RootLayout() {
         if (backgroundedAt !== null) {
           const elapsed = Date.now() - backgroundedAt;
           if (elapsed >= LOCK_TIMEOUT_MS) {
-            // Clear sensitive session data and require re-auth
             clearSession();
             setIsLocked(true);
           }
@@ -108,9 +111,7 @@ export default function RootLayout() {
       if (result.success) {
         setIsLocked(false);
       }
-      // If auth fails or is cancelled, stay locked (user can retry via button)
     } catch {
-      // Device may not support it; unlock anyway
       setIsLocked(false);
     }
   }
@@ -126,10 +127,34 @@ export default function RootLayout() {
     // Fetch machines on auth
     fetchMachines(token).catch(() => {});
 
-    // Set up relay
+    // Set up relay with encryption
     const client = new RelayClient(RELAY_URL, handleEnvelope);
     relayRef.current = client;
-    client.connect(token);
+
+    // Load own key pair and peer keys, then connect
+    (async () => {
+      try {
+        const ownKp = await getOrCreateKeyPair();
+        client.setOwnKeyPair(ownKp);
+
+        // Load peer keys for all known machines
+        const currentMachines = useMachineStore.getState().machines;
+        for (const m of currentMachines) {
+          const peerKeyHex = await loadPeerKey(m.id);
+          if (peerKeyHex) {
+            try {
+              client.setPeerPublicKey(m.id, fromBase64(peerKeyHex));
+            } catch {
+              // Key may be hex-encoded instead of base64; try raw
+            }
+          }
+        }
+      } catch {
+        // Proceed without encryption keys — unencrypted messages still work
+      }
+
+      client.connect(token);
+    })();
 
     return () => {
       client.disconnect();
@@ -137,7 +162,28 @@ export default function RootLayout() {
     };
   }, [token]);
 
+  // Re-load peer keys when machines list changes
+  useEffect(() => {
+    const client = relayRef.current;
+    if (!client) return;
+
+    (async () => {
+      for (const m of machines) {
+        const peerKeyHex = await loadPeerKey(m.id);
+        if (peerKeyHex) {
+          try {
+            client.setPeerPublicKey(m.id, fromBase64(peerKeyHex));
+          } catch {
+            // ignore
+          }
+        }
+      }
+    })();
+  }, [machines]);
+
   function handleEnvelope(env: Envelope) {
+    const client = relayRef.current;
+
     switch (env.type) {
       case 'machine_status': {
         try {
@@ -148,14 +194,54 @@ export default function RootLayout() {
         }
         break;
       }
+
       case 'session_event': {
-        addEvent({ kind: env.type, seq: 0, data: env });
+        // Try to decrypt the payload
+        let payload: Payload | null = null;
+        if (client) {
+          payload = client.decryptPayload(env);
+        }
+        if (!payload) {
+          // Fallback: treat as opaque event
+          payload = { kind: env.type, seq: 0, data: env };
+        }
+
+        // Dispatch to the correct session
+        const sessionId = env.session_id || 'unknown';
+        addSessionEvent(sessionId, payload);
+
+        // If it's an approval request, also add to pending approvals
+        if (payload.kind === 'approval' && payload.data?.tool) {
+          addApproval({
+            id: payload.data.approval_id ?? String(payload.seq),
+            machine_id: env.machine_id,
+            session_id: sessionId,
+            tool: payload.data.tool,
+            description: payload.data.description ?? '',
+            timestamp: payload.data.timestamp ?? Date.now(),
+          });
+        }
         break;
       }
+
+      case 'session_list': {
+        // Agent sent its list of active sessions
+        let payload: Payload | null = null;
+        if (client) {
+          payload = client.decryptPayload(env);
+        }
+        if (payload?.data && Array.isArray(payload.data)) {
+          useMachineStore.getState().setSessions(env.machine_id, payload.data);
+        }
+        break;
+      }
+
       case 'approval_response':
-      case 'user_input': {
+      case 'user_input':
+      case 'ping':
+      case 'pong':
         break;
-      }
+
       default:
         break;
     }

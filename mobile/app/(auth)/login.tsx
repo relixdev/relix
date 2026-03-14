@@ -13,6 +13,7 @@ import {
 import * as WebBrowser from 'expo-web-browser';
 import { useAuthNavigation } from '../../lib/navigationRef';
 import { useAuthStore } from '../../stores/authStore';
+import { getGitHubAuthUrl } from '../../lib/api';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -40,9 +41,8 @@ export default function LoginScreen() {
 
   const handleGitHub = async () => {
     try {
-      // Open GitHub OAuth in browser — the redirect will call maybeCompleteAuthSession
       const result = await WebBrowser.openAuthSessionAsync(
-        'https://api.relix.sh/v1/auth/github',
+        getGitHubAuthUrl(),
         'relix://auth',
       );
       if (result.type === 'success' && result.url) {

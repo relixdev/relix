@@ -1,22 +1,17 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import * as api from '../lib/api';
+import type { User } from '../lib/api';
 
 const TOKEN_KEY = 'relix_auth_token';
 const USER_KEY = 'relix_user';
-
-interface User {
-  id: string;
-  email: string;
-  tier: string;
-}
 
 interface AuthState {
   token: string | null;
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  login: (provider: 'github' | 'email', credentials: any) => Promise<void>;
+  login: (provider: 'github' | 'email', credentials: Record<string, any>) => Promise<void>;
   logout: () => Promise<void>;
   loadToken: () => Promise<void>;
   refreshToken: () => Promise<void>;
@@ -45,15 +40,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (provider, credentials) => {
     set({ isLoading: true, error: null });
     try {
-      const { token } = await api.login(provider, credentials);
-      // Fetch user plan info to populate user object
-      const planInfo = await api.getPlan(token);
-      // Build a minimal user from credentials + plan
-      const user: User = {
-        id: credentials.id ?? credentials.email ?? 'unknown',
-        email: credentials.email ?? '',
-        tier: planInfo.tier,
-      };
+      const result = await api.login(provider, credentials);
+      const { token, user } = result;
       await SecureStore.setItemAsync(TOKEN_KEY, token);
       await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
       set({ token, user, error: null });
@@ -83,9 +71,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!token) return;
     set({ isLoading: true, error: null });
     try {
-      const { token: newToken } = await api.refreshToken(token);
-      await SecureStore.setItemAsync(TOKEN_KEY, newToken);
-      set({ token: newToken });
+      const result = await api.refreshToken(token);
+      await SecureStore.setItemAsync(TOKEN_KEY, result.token);
+      if (result.user) {
+        await SecureStore.setItemAsync(USER_KEY, JSON.stringify(result.user));
+        set({ token: result.token, user: result.user });
+      } else {
+        set({ token: result.token });
+      }
     } catch (e: any) {
       set({ error: e.message ?? 'Token refresh failed' });
       throw e;

@@ -1,4 +1,5 @@
 import sodium from 'libsodium-wrappers';
+import * as SecureStore from 'expo-secure-store';
 import type { Payload } from './protocol';
 
 export interface KeyPair {
@@ -6,12 +7,18 @@ export interface KeyPair {
   privateKey: Uint8Array;
 }
 
+const OWN_KEYPAIR_KEY = 'relix_own_keypair';
+
+// ─── Initialization ────────────────────────────────────────────────────
+
 /**
  * Initialize libsodium. Must be awaited before calling any other crypto function.
  */
 export async function initCrypto(): Promise<void> {
   await sodium.ready;
 }
+
+// ─── Key generation ────────────────────────────────────────────────────
 
 /**
  * Generate an X25519 key pair for use with NaCl box.
@@ -23,6 +30,59 @@ export function generateKeyPair(): KeyPair {
     privateKey: kp.privateKey,
   };
 }
+
+// ─── Key persistence ───────────────────────────────────────────────────
+
+/**
+ * Get or create the mobile app's persistent X25519 key pair.
+ * Stored securely via expo-secure-store.
+ */
+export async function getOrCreateKeyPair(): Promise<KeyPair> {
+  await initCrypto();
+
+  const stored = await SecureStore.getItemAsync(OWN_KEYPAIR_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored) as { publicKey: number[]; privateKey: number[] };
+      return {
+        publicKey: new Uint8Array(parsed.publicKey),
+        privateKey: new Uint8Array(parsed.privateKey),
+      };
+    } catch {
+      // Corrupted — regenerate
+    }
+  }
+
+  const kp = generateKeyPair();
+  await SecureStore.setItemAsync(
+    OWN_KEYPAIR_KEY,
+    JSON.stringify({
+      publicKey: Array.from(kp.publicKey),
+      privateKey: Array.from(kp.privateKey),
+    }),
+  );
+  return kp;
+}
+
+// ─── Encoding helpers ──────────────────────────────────────────────────
+
+export function toBase64(data: Uint8Array): string {
+  return sodium.to_base64(data, sodium.base64_variants.URLSAFE_NO_PADDING);
+}
+
+export function fromBase64(encoded: string): Uint8Array {
+  return sodium.from_base64(encoded, sodium.base64_variants.URLSAFE_NO_PADDING);
+}
+
+export function toHex(data: Uint8Array): string {
+  return sodium.to_hex(data);
+}
+
+export function fromHex(hex: string): Uint8Array {
+  return sodium.from_hex(hex);
+}
+
+// ─── Encrypt / Decrypt ─────────────────────────────────────────────────
 
 /**
  * Encrypt plaintext using NaCl box (X25519 + XSalsa20-Poly1305).
@@ -64,6 +124,8 @@ export function decrypt(
   return plaintext;
 }
 
+// ─── Payload seal / open ───────────────────────────────────────────────
+
 /**
  * Seal a Payload object: JSON-encode then encrypt.
  */
@@ -71,20 +133,22 @@ export function sealPayload(
   payload: Payload,
   recipientPub: Uint8Array,
   senderPriv: Uint8Array,
-): Uint8Array {
+): string {
   const json = JSON.stringify(payload);
   const plaintext = new TextEncoder().encode(json);
-  return encrypt(plaintext, recipientPub, senderPriv);
+  const sealed = encrypt(plaintext, recipientPub, senderPriv);
+  return toBase64(sealed);
 }
 
 /**
- * Open a sealed Payload: decrypt then JSON-parse.
+ * Open a sealed Payload: base64-decode, decrypt, then JSON-parse.
  */
 export function openPayload(
-  ciphertext: Uint8Array,
+  encodedCiphertext: string,
   senderPub: Uint8Array,
   recipientPriv: Uint8Array,
 ): Payload {
+  const ciphertext = fromBase64(encodedCiphertext);
   const plaintext = decrypt(ciphertext, senderPub, recipientPriv);
   const json = new TextDecoder().decode(plaintext);
   return JSON.parse(json) as Payload;

@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuthStore } from '../stores/authStore';
 import * as api from '../lib/api';
+import { getOrCreateKeyPair, toBase64, toHex } from '../lib/crypto';
 import type { RootStackParamList } from '../lib/navigationRef';
 
 type PairingNavProp = NativeStackNavigationProp<RootStackParamList, 'Pairing'>;
@@ -26,7 +27,7 @@ type PairingState =
   | { phase: 'error'; message: string };
 
 export default function PairingScreen() {
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const navigation = useNavigation<PairingNavProp>();
   const [state, setState] = useState<PairingState>({ phase: 'loading' });
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -38,7 +39,16 @@ export default function PairingScreen() {
     clearTimers();
 
     try {
-      const { code, expires_at } = await api.generatePairingCode(token);
+      // Generate mobile key pair for E2E encryption
+      const ownKp = await getOrCreateKeyPair();
+      const mobilePublicKey = toBase64(ownKp.publicKey);
+      const userId = user?.id ?? '';
+
+      const { code, expires_at } = await api.generatePairingCode(
+        token,
+        userId,
+        mobilePublicKey,
+      );
       setState({ phase: 'waiting', code, expiresAt: expires_at });
 
       // Poll every 2 seconds for pairing completion
@@ -46,13 +56,18 @@ export default function PairingScreen() {
         if (!token) return;
         try {
           const result = await api.checkPairingStatus(token, code);
-          if (result.status === 'completed' && result.machine_id && result.peer_public_key) {
+          if (result.status === 'completed') {
             clearTimers();
+            const peerPublicKey = result.agent_public_key ?? result.peer_public_key ?? '';
+            const machineId = result.machine_id ?? '';
             navigation.replace('SASVerification', {
               pairingCode: code,
-              peerPublicKey: result.peer_public_key,
-              machineId: result.machine_id,
+              peerPublicKey,
+              machineId,
             });
+          } else if (result.status === 'expired' || result.status === 'failed') {
+            clearTimers();
+            setState({ phase: 'expired' });
           }
         } catch {
           // ignore transient poll errors
@@ -86,7 +101,6 @@ export default function PairingScreen() {
   }, []);
 
   const formatCode = (code: string) => {
-    // Format as XXX XXX for readability
     if (code.length === 6) {
       return `${code.slice(0, 3)} ${code.slice(3)}`;
     }
@@ -108,7 +122,7 @@ export default function PairingScreen() {
         {state.phase === 'loading' && (
           <View style={styles.centerContent}>
             <ActivityIndicator size="large" color="#007AFF" />
-            <Text style={styles.loadingText}>Generating pairing code…</Text>
+            <Text style={styles.loadingText}>Generating pairing code...</Text>
           </View>
         )}
 
@@ -127,7 +141,7 @@ export default function PairingScreen() {
 
             <View style={styles.waitingRow}>
               <ActivityIndicator size="small" color="#007AFF" />
-              <Text style={styles.waitingText}>Waiting for pairing to complete…</Text>
+              <Text style={styles.waitingText}>Waiting for pairing to complete...</Text>
             </View>
 
             <Text style={styles.expireNote}>Code expires in 5 minutes</Text>

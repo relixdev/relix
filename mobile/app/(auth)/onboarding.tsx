@@ -5,13 +5,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Clipboard,
-  Alert,
   Platform,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuthStore } from '../../stores/authStore';
 import { useMachineStore } from '../../stores/machineStore';
 import { useOnboardingNavigation } from '../../lib/navigationRef';
+import type { RootStackParamList } from '../../lib/navigationRef';
+
+type OnboardingNavProp = NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
 
 const STEPS = [
   {
@@ -37,7 +41,8 @@ const STEPS = [
 export default function OnboardingScreen() {
   const { token } = useAuthStore();
   const { machines, fetchMachines } = useMachineStore();
-  const navigation = useOnboardingNavigation();
+  const onboardingNav = useOnboardingNavigation();
+  const navigation = useNavigation<OnboardingNavProp>();
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [didCopy, setDidCopy] = useState<number | null>(null);
 
@@ -61,21 +66,18 @@ export default function OnboardingScreen() {
   useEffect(() => {
     if (machines.length > 0) {
       if (pollRef.current) clearInterval(pollRef.current);
-      navigation.navigateToDashboard();
+      onboardingNav.navigateToDashboard();
     }
   }, [machines.length]);
 
-  const copyToClipboard = (text: string, stepNum: number) => {
-    Clipboard.setString(text);
+  const copyToClipboard = async (text: string, stepNum: number) => {
+    await Clipboard.setStringAsync(text);
     setDidCopy(stepNum);
     setTimeout(() => setDidCopy(null), 2000);
   };
 
   const handlePair = () => {
-    Alert.alert(
-      'Pairing',
-      'Open Relix on your machine and run: relixctl pair\n\nThis phone will be detected automatically.',
-    );
+    navigation.navigate('Pairing');
   };
 
   return (
@@ -116,7 +118,7 @@ export default function OnboardingScreen() {
 
       <View style={styles.waitingRow}>
         <View style={styles.pulseDot} />
-        <Text style={styles.waitingText}>Waiting for machine to connect…</Text>
+        <Text style={styles.waitingText}>Waiting for machine to connect...</Text>
       </View>
     </ScrollView>
   );

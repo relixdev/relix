@@ -1,103 +1,120 @@
-# Relix
+<p align="center">
+  <h1 align="center">⚡ Relix</h1>
+  <p align="center"><strong>Command center for all your AI coding agents.</strong></p>
+  <p align="center">
+    One app to control Claude Code, Aider, Cline, and every AI tool on every machine — with E2E encryption and push notifications.
+  </p>
+</p>
 
-**Command center for all your AI coding agents.**
+<p align="center">
+  <a href="https://github.com/relixdev/relix/actions"><img src="https://img.shields.io/github/actions/workflow/status/relixdev/relix/test.yml?branch=main&label=tests&style=flat-square" alt="Tests"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License: MIT"></a>
+  <a href="https://discord.gg/relix"><img src="https://img.shields.io/badge/discord-join-7289da?style=flat-square&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://github.com/relixdev/relix/releases/latest"><img src="https://img.shields.io/github/v/release/relixdev/relix?style=flat-square&color=orange" alt="Latest Release"></a>
+</p>
 
-Control Claude Code, Aider, Cline, and more from your phone. One app, every tool, every machine. E2E encrypted.
+---
 
-## How It Works
+<p align="center">
+  <em><!-- TODO: Replace with demo GIF --></em><br>
+  <code>relixctl pair</code> → push notification → approve from phone → agent continues
+</p>
 
-```
-Your Machine                    Cloud                     Your Phone
-┌──────────┐              ┌───────────┐              ┌──────────┐
-│ relixctl │──WebSocket──▶│   Relay   │◀──WebSocket──│  Mobile  │
-│ (agent)  │              │  (router) │              │  (app)   │
-└──────────┘              └───────────┘              └──────────┘
-     │                         ▲                          │
-     │                    ┌────┴────┐                     │
-     ▼                    │  Cloud  │                     ▼
-  Claude Code             │  (auth) │               Dashboard
-  Aider, Cline...        └─────────┘            Sessions, Approvals
-```
+---
 
-- **All connections outbound** — works behind firewalls, on cellular, everywhere
-- **E2E encrypted** — relay routes opaque blobs, never sees your code
-- **Open source relay + agent** — self-host if you want
+## Why Relix
 
-## Quick Start
+Your AI coding agents are stuck when you walk away. Sessions block for hours waiting for approvals you can't see. You have multiple machines, multiple tools, multiple terminal windows — and no single place to manage them.
 
-### On your phone
-1. Download Relix from the App Store / Play Store
-2. Sign up and go to "Add Machine"
-
-### On your dev machine
-```bash
-# Install the agent
-curl -fsSL relix.sh/install | sh
-
-# Login
-relixctl login
-
-# Pair with your phone
-relixctl pair <code-from-app>
-```
-
-That's it. Walk away from your laptop — approve tool calls, send messages, and monitor sessions from your phone.
+Relix fixes that.
 
 ## Features
 
-- **Multi-tool support** — Claude Code today, Aider and Cline coming soon
-- **Multi-machine dashboard** — all your dev machines in one view
-- **Push notifications** — "Approval needed: Edit src/auth.ts"
-- **Chat + Terminal modes** — view sessions your way
-- **Biometric lock** — Face ID / fingerprint to open
-- **Smart approvals** — approve from notification without opening the app
-- **Self-hostable relay** — `docker run ghcr.io/relixdev/relay`
+- **🔌 Multi-tool** — Claude Code, Aider, Cline, and more in one dashboard
+- **🖥️ Multi-machine** — Every dev machine, server, and CI runner in one view
+- **🔐 E2E Encrypted** — NaCl box encryption. The relay routes ciphertext — it never sees your code
+- **🔔 Push Notifications** — "Approval needed: Edit src/auth.ts" straight to your phone
+- **🏠 Self-hostable** — MIT-licensed relay. Run it on your own infrastructure
+
+## Quick Start
+
+### Install the CLI
+
+```bash
+# Homebrew
+brew install relixdev/tap/relixctl
+
+# or curl
+curl -fsSL relix.sh/install | sh
+
+# or from source
+git clone https://github.com/relixdev/relix.git
+cd relix/relixctl && make build
+```
+
+### Pair with your phone
+
+```bash
+# 1. Download Relix from the App Store / Play Store
+# 2. Sign up and tap "Add Machine"
+
+# 3. On your dev machine:
+relixctl login
+relixctl pair <code-from-app>
+```
+
+### Start coding
+
+Walk away from your laptop. When Claude Code needs approval, your phone buzzes. Tap **Allow**. The agent continues. That's it.
 
 ## Architecture
 
-| Component | Description | License |
-|-----------|-------------|---------|
-| `protocol/` | Wire protocol, crypto primitives, shared types | MIT |
-| `relixctl/` | CLI agent — session discovery, bridging, daemon | MIT |
-| `relay/` | WebSocket router with buffering and metrics | MIT |
-| `cloud/` | Auth, billing, push notifications | Proprietary |
-| `mobile/` | React Native app (iOS + Android) | Proprietary |
+```
+Your Machines                     Cloud                      Your Phone
+┌──────────────┐            ┌─────────────┐            ┌──────────────┐
+│   relixctl   │──outbound──▶    Relay    ◀──outbound──│    Mobile    │
+│              │  WebSocket  │  (router)  │  WebSocket  │     App      │
+│  ┌─────────┐ │            └──────┬──────┘            │ ┌──────────┐ │
+│  │Claude   │ │                   │                   │ │Dashboard │ │
+│  │Code     │ │            ┌──────┴──────┐            │ │Sessions  │ │
+│  ├─────────┤ │            │    Cloud    │            │ │Approvals │ │
+│  │Aider    │ │            │  (auth +   │            │ │Chat      │ │
+│  ├─────────┤ │            │  billing)  │            │ └──────────┘ │
+│  │Cline    │ │            └─────────────┘            └──────────────┘
+│  └─────────┘ │
+└──────────────┘
 
-### Tech Stack
-
-- **Backend:** Go 1.23+
-- **Mobile:** React Native (Expo), TypeScript
-- **Encryption:** X25519 + XSalsa20-Poly1305 (NaCl box)
-- **Transport:** WebSocket (JSON envelopes)
-- **Infrastructure:** Fly.io, Stripe, APNs/FCM
-
-## Development
-
-```bash
-# Run all Go tests
-cd protocol && go test -race ./... && cd ..
-cd relixctl && go test -race ./... && cd ..
-cd relay && go test -race ./... && cd ..
-cd cloud && go test -race ./... && cd ..
-
-# Run mobile tests
-cd mobile && npx jest
-
-# Build the agent
-cd relixctl && make build
-
-# Build the relay
-cd relay && make build
-
-# Run relay locally
-cd relay && docker-compose up
+  All connections outbound — works behind firewalls, NATs, and on cellular.
+  Relay sees only encrypted blobs — zero-knowledge by design.
 ```
 
-See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for the full development guide.
+## Supported Tools
+
+| Tool | Status | Integration |
+|------|--------|-------------|
+| **Claude Code** | ✅ Supported | Headless mode, bidirectional streaming |
+| **Aider** | ✅ Supported | CLI adapter, Python API |
+| **Cline** | 🔜 Coming soon | VS Code extension bridge |
+| **Cursor** | 📋 Planned | VS Code fork surface |
+| **Continue.dev** | 📋 Planned | Open plugin API |
+| **GitHub Copilot** | 📋 Planned | Extension surface |
+
+## Pricing
+
+|  | **Free** | **Plus** $4.99/mo | **Pro** $14.99/mo | **Team** $24.99/user/mo |
+|--|----------|-------------------|-------------------|-------------------------|
+| Machines | 3 | 10 | Unlimited | Unlimited |
+| Concurrent sessions | 2 | 5 | Unlimited | Unlimited |
+| Session history | 7 days | 30 days | 90 days | 90 days |
+| Priority relay |  |  | ✅ | ✅ |
+| Shared sessions |  |  |  | ✅ |
+| SSO / Admin |  |  |  | ✅ |
+
+The free tier is permanent. No credit card required. [Upgrade →](https://relix.sh/pricing)
 
 ## Self-Hosting
 
-Run your own relay:
+Run your own relay for full control over your data:
 
 ```bash
 docker run -d \
@@ -106,57 +123,55 @@ docker run -d \
   ghcr.io/relixdev/relay
 ```
 
-Point your agent at it:
+Point your agent and mobile app at it:
+
 ```bash
 relixctl config set relay_url wss://relay.yourdomain.com
+# Mobile: Settings → Relay URL → wss://relay.yourdomain.com
 ```
 
-Point the mobile app at it in Settings → Relay URL.
+The relay is MIT-licensed. Inspect every byte that touches your infrastructure.
 
-## Pricing
+## Project Structure
 
-| | Free | Plus $4.99/mo | Pro $14.99/mo | Team $24.99/user/mo |
-|---|---|---|---|---|
-| Machines | 3 | 10 | Unlimited | Unlimited |
-| Sessions | 2 | 5 | Unlimited | Unlimited |
-| History | 7 days | 30 days | 90 days | 90 days |
+| Component | Description | License |
+|-----------|-------------|---------|
+| [`protocol/`](protocol/) | Wire protocol, crypto primitives, shared types | MIT |
+| [`relixctl/`](relixctl/) | CLI agent — session discovery, bridging, daemon | MIT |
+| [`relay/`](relay/) | WebSocket router with buffering and metrics | MIT |
+| `cloud/` | Auth, billing, push notifications | Proprietary |
+| `mobile/` | React Native app (iOS + Android) | Proprietary |
+
+**Tech stack:** Go 1.23+ · React Native (Expo) · X25519 + XSalsa20-Poly1305 · WebSocket · Fly.io
+
+## Contributing
+
+We welcome contributions to the open-source components (`protocol/`, `relixctl/`, `relay/`).
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Write tests for your changes
+4. Ensure all tests pass: `go test -race ./...`
+5. Open a pull request
+
+See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for the full development guide.
 
 ## Security
 
-- **E2E encryption:** All session data encrypted with NaCl box (X25519 + XSalsa20-Poly1305). The relay never sees plaintext.
-- **Key pairing:** 6-digit code + 4-emoji Short Authentication String for MITM protection.
-- **Key rotation:** Automatic every 30 days.
-- **Mobile security:** Biometric auth, auto-lock after 5 minutes, session data cleared from memory on background.
-- **Self-hostable:** Run the relay on your own infrastructure for full control.
+Relix uses **NaCl box** (X25519 + XSalsa20-Poly1305) for end-to-end encryption. The relay is zero-knowledge — it routes encrypted blobs and never sees plaintext session data.
 
-## Adapter Roadmap
+- **Key exchange:** 6-digit pairing code + 4-emoji Short Authentication String (SAS) for MITM protection
+- **Key rotation:** Automatic every 30 days
+- **Mobile:** Biometric auth, auto-lock, session data cleared on background
 
-| Status | Tool | Integration |
-|--------|------|-------------|
-| ✅ Built | Claude Code | Headless mode, bidirectional streaming |
-| 🔜 Next | Aider | Open source CLI, Python API |
-| 🔜 Next | Cline | Open source VS Code extension |
-| 📋 Planned | Cursor | VS Code fork, extension surface |
-| 📋 Planned | Continue.dev | Open source, pluggable |
-| 📋 Planned | GitHub Copilot | Largest market, most closed |
-
-## Documentation
-
-- [Project Summary](docs/PROJECT.md)
-- [Design Specification](docs/specs/2026-03-11-relix-design.md)
-- [Product Requirements](docs/PRD.md)
-- [API Reference](docs/API.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-- [Development Guide](docs/DEVELOPMENT.md)
-- [Go-to-Market](docs/GO-TO-MARKET.md)
+**Found a vulnerability?** Please report it responsibly via [security@relix.sh](mailto:security@relix.sh). Do not open a public issue for security vulnerabilities.
 
 ## License
 
-- `protocol/`, `relixctl/`, `relay/` — MIT License
-- `cloud/`, `mobile/` — Proprietary
+The open-source components (`protocol/`, `relixctl/`, `relay/`) are licensed under the [MIT License](LICENSE).
+
+`cloud/` and `mobile/` are proprietary.
 
 ## Links
 
-- **Website:** [relix.sh](https://relix.sh)
-- **GitHub:** [github.com/relixdev](https://github.com/relixdev)
-- **Discord:** Coming soon
+[Website](https://relix.sh) · [Documentation](https://relix.sh/docs) · [Discord](https://discord.gg/relix) · [Twitter](https://twitter.com/relixdev) · [Blog](https://relix.sh/blog) · [GitHub](https://github.com/relixdev)

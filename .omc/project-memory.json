@@ -198,6 +198,12 @@
       "type": "file"
     },
     {
+      "path": "cloud/internal/api/server.go",
+      "accessCount": 3,
+      "lastAccessed": 1773500990434,
+      "type": "file"
+    },
+    {
       "path": "docs/HANDOFF.md",
       "accessCount": 2,
       "lastAccessed": 1773433748531,
@@ -228,9 +234,39 @@
       "type": "file"
     },
     {
-      "path": "cloud/internal/api/server.go",
+      "path": "docs/PRD.md",
       "accessCount": 2,
-      "lastAccessed": 1773433983591,
+      "lastAccessed": 1773500971015,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/login.go",
+      "accessCount": 2,
+      "lastAccessed": 1773501065815,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/root.go",
+      "accessCount": 2,
+      "lastAccessed": 1773501083826,
+      "type": "file"
+    },
+    {
+      "path": "docs/legal/PRIVACY-POLICY.md",
+      "accessCount": 2,
+      "lastAccessed": 1773501180788,
+      "type": "file"
+    },
+    {
+      "path": "docs/legal/TERMS-OF-SERVICE.md",
+      "accessCount": 2,
+      "lastAccessed": 1773501234187,
+      "type": "file"
+    },
+    {
+      "path": "docs/legal/REFUND-POLICY.md",
+      "accessCount": 2,
+      "lastAccessed": 1773501242972,
       "type": "file"
     },
     {
@@ -327,6 +363,96 @@
       "path": "cloud/go.sum",
       "accessCount": 1,
       "lastAccessed": 1773433771110,
+      "type": "file"
+    },
+    {
+      "path": "docs/GO-TO-MARKET.md",
+      "accessCount": 1,
+      "lastAccessed": 1773500963872,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/auth/oauth.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500982733,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/auth/devicecode.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500983176,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/auth/pairing.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500983752,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/auth/refresh.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500984061,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/config/config.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500984378,
+      "type": "file"
+    },
+    {
+      "path": "cloud/internal/api/auth_handlers.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500990100,
+      "type": "file"
+    },
+    {
+      "path": "docs/API.md",
+      "accessCount": 1,
+      "lastAccessed": 1773500990664,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/crypto/keystore.go",
+      "accessCount": 1,
+      "lastAccessed": 1773500996087,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/root_test.go",
+      "accessCount": 1,
+      "lastAccessed": 1773501000356,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/internal/relay/client.go",
+      "accessCount": 1,
+      "lastAccessed": 1773501000815,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/status_test.go",
+      "accessCount": 1,
+      "lastAccessed": 1773501001084,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/status.go",
+      "accessCount": 1,
+      "lastAccessed": 1773501011245,
+      "type": "file"
+    },
+    {
+      "path": "relixctl/cmd/pair.go",
+      "accessCount": 1,
+      "lastAccessed": 1773501077569,
+      "type": "file"
+    },
+    {
+      "path": "docs/MARKETING-PLAN.md",
+      "accessCount": 1,
+      "lastAccessed": 1773501317932,
       "type": "file"
     }
   ],

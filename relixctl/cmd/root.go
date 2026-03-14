@@ -5,7 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/relixdev/protocol"
 	"github.com/relixdev/relix/relixctl/internal/config"
+	"github.com/relixdev/relix/relixctl/internal/crypto"
 )
 
 const version = "0.1.0"
@@ -14,6 +16,29 @@ const version = "0.1.0"
 type RootCmd struct {
 	*cobra.Command
 	cfgDir string
+
+	// Test injection points (nil in production).
+	overrideLoginOpts *loginOpts
+	overridePairOpts  *pairOpts
+}
+
+// SetLoginFuncs injects mock login functions for testing.
+// Pass nil for either to keep the default implementation.
+func (r *RootCmd) SetLoginFuncs(
+	browserFn func(clientID, authURL, tokenURL string) (string, error),
+	deviceFn func(clientID, deviceCodeURL, tokenURL string) (string, error),
+) {
+	r.overrideLoginOpts = &loginOpts{
+		browserLogin: browserFn,
+		deviceLogin:  deviceFn,
+	}
+}
+
+// SetPairFunc injects a mock pair function for testing.
+func (r *RootCmd) SetPairFunc(
+	fn func(relayURL, authToken, code string, ks *crypto.KeyPair, keysDir string) (protocol.PublicKey, error),
+) {
+	r.overridePairOpts = &pairOpts{pairFn: fn}
 }
 
 // New returns a configured RootCmd. cfgDir overrides the default ~/.relixctl/
@@ -30,8 +55,8 @@ func New(cfgDir string) *RootCmd {
 	}
 
 	rootCmd.AddCommand(root.configCmd())
-	rootCmd.AddCommand(stubCmd("login", "Authenticate with Relix"))
-	rootCmd.AddCommand(stubCmd("pair", "Pair a mobile device"))
+	rootCmd.AddCommand(root.loginCmd())
+	rootCmd.AddCommand(root.pairCmd())
 	rootCmd.AddCommand(root.statusCmd())
 	rootCmd.AddCommand(root.sessionsCmd())
 	rootCmd.AddCommand(root.startCmd())

@@ -6,13 +6,14 @@ export type RootStackParamList = {
   Pairing: undefined;
   SASVerification: { pairingCode: string; peerPublicKey: string; machineId: string };
   MainTabs: undefined;
+  Session: { id: string; machineId: string };
 };
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
-export function navigate(name: keyof RootStackParamList) {
+export function navigate(name: keyof RootStackParamList, params?: any) {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name);
+    navigationRef.navigate(name as any, params);
   }
 }
 

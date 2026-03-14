@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -10,7 +10,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSessionStore } from '../../stores/sessionStore';
 import { useMachineStore } from '../../stores/machineStore';
 import type { Approval } from '../../stores/machineStore';
@@ -41,15 +41,27 @@ function payloadToTerminalLine(payload: Payload): string {
 }
 
 export default function SessionScreen() {
-  const route = useRoute<{ key: string; name: string; params: { id: string } }>();
+  const route = useRoute<{ key: string; name: string; params: { id: string; machineId?: string } }>();
+  const navigation = useNavigation();
   const sessionId = route.params?.id;
+  const machineId = route.params?.machineId;
+
   const events = useSessionStore((s) => s.events);
   const addEvent = useSessionStore((s) => s.addEvent);
+  const setSession = useSessionStore((s) => s.setSession);
   const machines = useMachineStore((s) => s.machines);
+  const resolveApproval = useMachineStore((s) => s.resolveApproval);
 
   const [mode, setMode] = useState<'chat' | 'terminal'>('chat');
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
+
+  // Set the active session on mount
+  useEffect(() => {
+    if (sessionId) {
+      setSession(sessionId);
+    }
+  }, [sessionId]);
 
   // Find project name for this session
   const session = machines
@@ -59,7 +71,7 @@ export default function SessionScreen() {
 
   const handleSend = useCallback(() => {
     const text = inputText.trim();
-    if (!text) return;
+    if (!text || !sessionId) return;
     setInputText('');
 
     // Optimistic: add user message to local events immediately
@@ -70,8 +82,18 @@ export default function SessionScreen() {
     };
     addEvent(optimistic);
 
-    // TODO: encrypt and send via relay using sendMessage() when relay/keys are wired up
-  }, [inputText, addEvent]);
+    // Send via relay — the _layout relay client handles encryption
+    // We dispatch a custom event that the layout picks up
+    if (machineId) {
+      const { RelayMessageBus } = require('../../lib/relayBus');
+      RelayMessageBus.emit('send', {
+        machineId,
+        sessionId,
+        type: 'user_input' as const,
+        payload: { kind: 'user_message', seq: Date.now(), data: { text } },
+      });
+    }
+  }, [inputText, addEvent, sessionId, machineId]);
 
   const handleApprovalAllow = useCallback(
     (approvalId: string) => {
@@ -81,9 +103,19 @@ export default function SessionScreen() {
         data: { approval_id: approvalId, allowed: true, timestamp: Date.now() },
       };
       addEvent(response);
-      // TODO: send approval_response envelope via relay
+      resolveApproval(approvalId, true);
+
+      if (machineId && sessionId) {
+        const { RelayMessageBus } = require('../../lib/relayBus');
+        RelayMessageBus.emit('send', {
+          machineId,
+          sessionId,
+          type: 'approval_response' as const,
+          payload: { kind: 'approval', seq: Date.now(), data: { approval_id: approvalId, allowed: true } },
+        });
+      }
     },
-    [addEvent],
+    [addEvent, resolveApproval, machineId, sessionId],
   );
 
   const handleApprovalDeny = useCallback(
@@ -94,9 +126,19 @@ export default function SessionScreen() {
         data: { approval_id: approvalId, allowed: false, timestamp: Date.now() },
       };
       addEvent(response);
-      // TODO: send approval_response envelope via relay
+      resolveApproval(approvalId, false);
+
+      if (machineId && sessionId) {
+        const { RelayMessageBus } = require('../../lib/relayBus');
+        RelayMessageBus.emit('send', {
+          machineId,
+          sessionId,
+          type: 'approval_response' as const,
+          payload: { kind: 'approval', seq: Date.now(), data: { approval_id: approvalId, allowed: false } },
+        });
+      }
     },
-    [addEvent],
+    [addEvent, resolveApproval, machineId, sessionId],
   );
 
   const renderItem = useCallback(
@@ -104,7 +146,7 @@ export default function SessionScreen() {
       if (item.kind === 'approval' && item.data?.tool && item.data?.allowed === undefined) {
         const approval: Approval = {
           id: item.data.approval_id ?? String(item.seq),
-          machine_id: item.data.machine_id ?? '',
+          machine_id: item.data.machine_id ?? machineId ?? '',
           session_id: item.data.session_id ?? sessionId ?? '',
           tool: item.data.tool,
           description: item.data.description ?? '',
@@ -133,7 +175,7 @@ export default function SessionScreen() {
       }
       return null;
     },
-    [handleApprovalAllow, handleApprovalDeny, sessionId],
+    [handleApprovalAllow, handleApprovalDeny, sessionId, machineId],
   );
 
   const terminalLines = events.map(payloadToTerminalLine);
@@ -142,6 +184,9 @@ export default function SessionScreen() {
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Text style={styles.backText}>←</Text>
+        </TouchableOpacity>
         <Text style={styles.projectName} numberOfLines={1}>
           {projectName}
         </Text>
@@ -184,7 +229,7 @@ export default function SessionScreen() {
             style={[styles.input, mode === 'terminal' && styles.inputTerminal]}
             value={inputText}
             onChangeText={setInputText}
-            placeholder={mode === 'chat' ? 'Message…' : ''}
+            placeholder={mode === 'chat' ? 'Message...' : ''}
             placeholderTextColor={mode === 'terminal' ? '#636366' : '#C7C7CC'}
             returnKeyType="send"
             onSubmitEditing={handleSend}
@@ -233,6 +278,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#C6C6C8',
     backgroundColor: '#FFFFFF',
+  },
+  backButton: {
+    paddingRight: 12,
+  },
+  backText: {
+    fontSize: 20,
+    color: '#007AFF',
+    fontWeight: '600',
   },
   projectName: {
     fontSize: 16,

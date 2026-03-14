@@ -6,13 +6,17 @@ import {
   StyleSheet,
   RefreshControl,
   Alert,
-  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ApprovalCard from '../../components/ApprovalCard';
 import MachineCard from '../../components/MachineCard';
 import { useAuthStore } from '../../stores/authStore';
+import { useSessionStore } from '../../stores/sessionStore';
 import { useMachineStore, type Machine, type Approval } from '../../stores/machineStore';
+
+type DashboardNavProp = NativeStackNavigationProp<any>;
 
 function MachineSkeletonRow() {
   return (
@@ -56,6 +60,8 @@ const skeletonStyles = StyleSheet.create({
 
 export default function DashboardScreen() {
   const { token } = useAuthStore();
+  const navigation = useNavigation<DashboardNavProp>();
+  const setSession = useSessionStore((s) => s.setSession);
   const {
     machines,
     pendingApprovals,
@@ -89,8 +95,33 @@ export default function DashboardScreen() {
   );
 
   const handleMachinePress = useCallback((machine: Machine) => {
-    Alert.alert(machine.name, `Status: ${machine.status}\nSessions: ${machine.sessions.length}`);
-  }, []);
+    if (machine.sessions.length === 0) {
+      Alert.alert(machine.name, `Status: ${machine.status}\nNo active sessions`);
+      return;
+    }
+    if (machine.sessions.length === 1) {
+      // Go directly to the single session
+      const session = machine.sessions[0];
+      setSession(session.id);
+      navigation.navigate('Session', { id: session.id, machineId: machine.id });
+      return;
+    }
+    // Multiple sessions — let user pick
+    Alert.alert(
+      machine.name,
+      'Select a session:',
+      [
+        ...machine.sessions.map((s) => ({
+          text: `${s.project} (${s.status})`,
+          onPress: () => {
+            setSession(s.id);
+            navigation.navigate('Session', { id: s.id, machineId: machine.id });
+          },
+        })),
+        { text: 'Cancel', style: 'cancel' as const },
+      ],
+    );
+  }, [navigation, setSession]);
 
   const ListHeader = (
     <>

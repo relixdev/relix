@@ -10,15 +10,21 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as WebBrowser from 'expo-web-browser';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuthStore } from '../../stores/authStore';
 import { useMachineStore, type Machine } from '../../stores/machineStore';
 import * as api from '../../lib/api';
 import { deletePeerKey } from '../sas-verification';
+import type { RootStackParamList } from '../../lib/navigationRef';
+
+type SettingsNavProp = NativeStackNavigationProp<RootStackParamList>;
 
 // ─── Tier badge ──────────────────────────────────────────────────────────────
 
 function TierBadge({ tier }: { tier: string }) {
-  const isPro = tier === 'pro';
+  const isPro = tier === 'pro' || tier === 'plus';
   return (
     <View style={[styles.tierBadge, isPro && styles.tierBadgePro]}>
       <Text style={[styles.tierBadgeText, isPro && styles.tierBadgeTextPro]}>
@@ -122,6 +128,7 @@ export default function SettingsScreen() {
   const { user, logout } = useAuthStore();
   const { token } = useAuthStore();
   const { machines, fetchMachines } = useMachineStore();
+  const navigation = useNavigation<SettingsNavProp>();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [defaultView, setDefaultView] = useState<'chat' | 'terminal'>('chat');
@@ -139,16 +146,44 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const handleManageSubscription = () => {
-    Alert.alert('Manage Subscription', 'Visit relix.sh/billing to manage your subscription.');
+  const handleManageSubscription = async () => {
+    if (!token) return;
+    try {
+      const { portal_url } = await api.createBillingPortalSession(
+        token,
+        'relix://settings',
+      );
+      await WebBrowser.openBrowserAsync(portal_url);
+    } catch {
+      // Billing portal not yet implemented — show fallback
+      Alert.alert('Manage Subscription', 'Visit relix.sh/billing to manage your subscription.');
+    }
+  };
+
+  const handleUpgrade = async () => {
+    if (!token) return;
+    try {
+      const { checkout_url } = await api.createCheckoutSession(token, 'plus');
+      await WebBrowser.openBrowserAsync(checkout_url);
+    } catch (e: any) {
+      Alert.alert('Error', e.message ?? 'Failed to start checkout');
+    }
+  };
+
+  const handleAddMachine = () => {
+    navigation.navigate('Pairing');
   };
 
   const handleHelp = () => {
-    Alert.alert('Help & Support', 'Visit relix.sh/docs or email support@relix.sh');
+    WebBrowser.openBrowserAsync('https://relix.sh/docs').catch(() => {
+      Alert.alert('Help & Support', 'Visit relix.sh/docs or email support@relix.sh');
+    });
   };
 
   const handlePrivacy = () => {
-    Alert.alert('Privacy Policy', 'Visit relix.sh/privacy to read our privacy policy.');
+    WebBrowser.openBrowserAsync('https://relix.sh/privacy').catch(() => {
+      Alert.alert('Privacy Policy', 'Visit relix.sh/privacy to read our privacy policy.');
+    });
   };
 
   const handleMachineRemoved = () => {
@@ -172,13 +207,22 @@ export default function SettingsScreen() {
               <View style={styles.row}>
                 <Text style={styles.rowLabel}>Email</Text>
                 <Text style={styles.rowValue} numberOfLines={1}>
-                  {user.email || '—'}
+                  {user.email || '---'}
                 </Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.rowLabel}>Plan</Text>
                 <TierBadge tier={user.tier} />
               </View>
+              {user.tier === 'free' && (
+                <TouchableOpacity
+                  style={[styles.row, styles.rowTouchable]}
+                  onPress={handleUpgrade}
+                >
+                  <Text style={[styles.rowLabel, { color: '#6366f1' }]}>Upgrade to Plus</Text>
+                  <Text style={styles.chevron}>›</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={[styles.row, styles.rowLast, styles.rowTouchable]}
                 onPress={handleManageSubscription}
@@ -218,6 +262,9 @@ export default function SettingsScreen() {
               ))}
             </View>
           )}
+          <TouchableOpacity style={styles.addMachineButton} onPress={handleAddMachine}>
+            <Text style={styles.addMachineText}>+ Add Machine</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Preferences */}
@@ -279,7 +326,7 @@ export default function SettingsScreen() {
           <View style={styles.card}>
             <View style={styles.row}>
               <Text style={styles.rowLabel}>Version</Text>
-              <Text style={styles.rowValue}>0.1.0</Text>
+              <Text style={styles.rowValue}>1.0.0</Text>
             </View>
             <TouchableOpacity
               style={[styles.row, styles.rowTouchable]}
@@ -363,9 +410,7 @@ const styles = StyleSheet.create({
   rowLast: {
     borderBottomWidth: 0,
   },
-  rowTouchable: {
-    // tap highlight handled by TouchableOpacity
-  },
+  rowTouchable: {},
   rowLabel: {
     fontSize: 15,
     color: '#0f172a',
@@ -397,7 +442,6 @@ const styles = StyleSheet.create({
   tierBadgeTextPro: {
     color: '#7c3aed',
   },
-  // Machine rows
   machineRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -442,14 +486,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f5f9',
     marginLeft: 16,
   },
-  lastMachineRow: {
-    // no border on last row
-  },
+  lastMachineRow: {},
   emptyMachines: {
     fontSize: 14,
     color: '#94a3b8',
   },
-  // Segment control for default view
+  addMachineButton: {
+    marginTop: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderStyle: 'dashed',
+  },
+  addMachineText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6366f1',
+  },
   segmentControl: {
     flexDirection: 'row',
     backgroundColor: '#f1f5f9',
@@ -478,7 +534,6 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     fontWeight: '600',
   },
-  // Logout
   logoutButton: {
     backgroundColor: '#fee2e2',
     borderRadius: 12,

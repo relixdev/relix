@@ -16,6 +16,7 @@
     "@types/libsodium-wrappers": "^0.7.14",
     "expo": "~55.0.6",
     "expo-auth-session": "^55.0.8",
+    "expo-clipboard": "^55.0.8",
     "expo-local-authentication": "~55.0.8",
     "expo-notifications": "~55.0.12",
     "expo-secure-store": "~55.0.8",

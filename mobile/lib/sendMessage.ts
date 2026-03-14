@@ -24,10 +24,8 @@ export async function sendMessage(
     },
   };
 
-  const encrypted = sealPayload(payload, peerPub, keys.privateKey);
-
-  // base64-encode the encrypted bytes for wire transport
-  const base64 = btoa(String.fromCharCode(...encrypted));
+  // sealPayload returns a base64-encoded string ready for wire transport
+  const base64 = sealPayload(payload, peerPub, keys.privateKey);
 
   const envelope: Envelope = {
     v: PROTOCOL_VERSION,

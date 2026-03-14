@@ -17,8 +17,10 @@ import {
   registerForPushNotifications,
   subscribeToNotificationResponses,
 } from '../lib/notifications';
+import { RelayMessageBus } from '../lib/relayBus';
 import type { Envelope, Payload } from '../lib/protocol';
 import LoginScreen from './(auth)/login';
+import SessionScreen from './session/[id]';
 import OnboardingScreen from './(auth)/onboarding';
 import PairingScreen from './pairing';
 import SASVerificationScreen from './sas-verification';
@@ -156,7 +158,17 @@ export default function RootLayout() {
       client.connect(token);
     })();
 
+    // Listen for outbound messages from session screens
+    const unsubBus = RelayMessageBus.on((msg) => {
+      try {
+        client.sendEncrypted(msg.machineId, msg.sessionId, msg.type, msg.payload);
+      } catch {
+        // relay not connected or missing keys — message dropped
+      }
+    });
+
     return () => {
+      unsubBus();
       client.disconnect();
       relayRef.current = null;
     };
@@ -287,6 +299,7 @@ export default function RootLayout() {
           ) : (
             <>
               <Stack.Screen name="MainTabs" component={TabsLayout} />
+              <Stack.Screen name="Session" component={SessionScreen} />
               <Stack.Screen name="Pairing" component={PairingScreen} />
               <Stack.Screen name="SASVerification" component={SASVerificationScreen} />
             </>

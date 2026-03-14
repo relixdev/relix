@@ -74,7 +74,9 @@ func runDaemon(dir string) error {
 
 	home, _ := os.UserHomeDir()
 	claudeDir := home + "/.claude"
-	adp := adapter.NewClaudeCodeAdapter(claudeDir, nil)
+	claudeAdp := adapter.NewClaudeCodeAdapter(claudeDir, nil)
+	aiderAdp := adapter.NewAiderAdapter(nil, nil)
+	adp := adapter.NewMultiAdapter(claudeAdp, aiderAdp)
 
 	bridgeAdapter := &daemonBridgeAdapter{
 		bridge:    b,

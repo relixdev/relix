@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relix — Command center for all your AI coding agents</title>
+  <meta name="description" content="Control Claude Code, Aider, Cline, and more from your phone. Push notifications, instant approvals, E2E encrypted.">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Relix — Command center for all your AI coding agents">
+  <meta property="og:description" content="Control Claude Code, Aider, Cline, and more from your phone. Push notifications, instant approvals, E2E encrypted.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://relix.sh">
+  <meta property="og:site_name" content="Relix">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Relix — Command center for all your AI coding agents">
+  <meta name="twitter:description" content="Control Claude Code, Aider, Cline, and more from your phone. Push notifications, instant approvals, E2E encrypted.">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Preconnect to font CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ Nav ============ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="logo-icon">R</div>
+        Relix
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <a href="#early-access" class="nav-cta">Get Early Access</a>
+    </div>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Open source relay &middot; E2E encrypted
+    </div>
+    <h1>Command center for all your AI coding agents</h1>
+    <p class="hero-sub">Control Claude Code, Aider, Cline, and more from your phone. Push notifications, instant approvals, E2E encrypted.</p>
+    <div class="hero-ctas">
+      <a href="#early-access" class="btn-primary">Get Early Access &rarr;</a>
+      <a href="#how-it-works" class="btn-secondary">See how it works &darr;</a>
+    </div>
+
+    <!-- Terminal mockup -->
+    <div class="hero-mockup">
+      <div class="mockup-window">
+        <div class="mockup-titlebar">
+          <span class="mockup-dot"></span>
+          <span class="mockup-dot"></span>
+          <span class="mockup-dot"></span>
+        </div>
+        <div class="mockup-content">
+          <div><span class="prompt">$</span> <span class="cmd">brew install relixdev/tap/relixctl</span></div>
+          <div><span class="dim">==&gt; Installing relixctl from relixdev/tap</span></div>
+          <div><span class="dim">==&gt; Installed. Run 'relixctl login' to get started.</span></div>
+          <div>&nbsp;</div>
+          <div><span class="prompt">$</span> <span class="cmd">relixctl login</span></div>
+          <div><span class="info">Authenticated as zach@dev.io</span></div>
+          <div>&nbsp;</div>
+          <div><span class="prompt">$</span> <span class="cmd">relixctl pair A7X-92K</span></div>
+          <div><span class="info">Paired with "Zach's iPhone"</span></div>
+          <div><span class="dim">Watching for Claude Code, Aider, Cline sessions...</span></div>
+          <div><span class="info">Session detected: Claude Code (pid 48291)</span></div>
+          <div><span class="dim">Bridging session &middot; E2E encrypted &middot; push notifications active</span></div>
+        </div>
+      </div>
+
+      <!-- Floating notification -->
+      <div class="mockup-notification">
+        <div class="notif-icon">&#x1f514;</div>
+        <div class="notif-text">
+          <strong>Approval needed</strong>
+          <span>Claude Code wants to edit src/auth.ts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Problem ============ -->
+  <section class="problem section">
+    <div class="container">
+      <p class="section-label">The problem</p>
+      <h2 class="section-title">Your AI agents are stuck when you walk away</h2>
+      <p class="section-subtitle">AI coding agents need approvals to keep working. When you step away, everything stops.</p>
+
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">&#x23f3;</div>
+          <h3>Blocked for hours</h3>
+          <p>Claude Code waiting for approval since 3pm &mdash; you're at dinner. The session sits idle until you get back to your laptop.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">&#x1f5a5;</div>
+          <h3>Too many machines</h3>
+          <p>Seven machines, seven terminal windows you can't see. No single view of what's running, what's blocked, what needs you.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">&#x1f512;</div>
+          <h3>Privacy concerns</h3>
+          <p>Your session is going through someone else's servers. Enterprise teams can't use tools that route code through third parties.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Features ============ -->
+  <section class="features section" id="features">
+    <div class="container">
+      <p class="section-label">Features</p>
+      <h2 class="section-title">Everything you need, nothing you don't</h2>
+      <p class="section-subtitle">Built for developers who run AI coding agents across multiple tools and machines.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon blue">&#x1f310;</div>
+          <h3>Multi-tool</h3>
+          <p>Claude Code, Aider, Cline, and Cursor support. One app for every AI coding tool you use.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">&#x1f4bb;</div>
+          <h3>Multi-machine</h3>
+          <p>See all your machines in one dashboard. Laptop, servers, CI &mdash; every session at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon purple">&#x1f510;</div>
+          <h3>E2E Encrypted</h3>
+          <p>NaCl box encryption (X25519 + XSalsa20-Poly1305). The relay sees only ciphertext. Self-hostable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon orange">&#x1f514;</div>
+          <h3>Push Notifications</h3>
+          <p>Get notified the instant any agent needs approval. Tap Allow or Deny right from the notification.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ How It Works ============ -->
+  <section class="how-it-works section" id="how-it-works">
+    <div class="container text-center">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title mx-auto" style="max-width: 600px;">Three steps to never miss an approval again</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Install</h3>
+            <p>Install relixctl on your machine. One command, no dependencies.</p>
+            <code>brew install relixdev/tap/relixctl</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Pair</h3>
+            <p>Open the mobile app, get a pairing code, and link your machine in seconds.</p>
+            <code>relixctl pair A7X-92K</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Control</h3>
+            <p>Walk away. Get push notifications. Approve from your phone. Your agents keep running.</p>
+            <code>&#x2713; Session bridged</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Install ============ -->
+  <section class="install section" id="install">
+    <div class="container text-center">
+      <p class="section-label">Get started</p>
+      <h2 class="section-title">Install in 30 seconds</h2>
+      <p class="section-subtitle mx-auto">Works on macOS, Linux, and WSL. No runtime dependencies.</p>
+
+      <div class="install-block">
+        <div class="install-header">
+          <span>Terminal</span>
+        </div>
+        <div class="install-code">
+          <div><span class="comment"># Homebrew</span></div>
+          <div><span class="cmd">brew install relixdev/tap/relixctl</span></div>
+          <div>&nbsp;</div>
+          <div><span class="comment"># or curl</span></div>
+          <div><span class="cmd">curl -fsSL relix.sh/install | sh</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Open Source ============ -->
+  <section class="open-source section">
+    <div class="container text-center">
+      <p class="section-label">Trust</p>
+      <h2 class="section-title">Open source where it matters</h2>
+      <p class="section-subtitle mx-auto">The relay and agent are MIT-licensed and on GitHub. Inspect every byte that touches your machine.</p>
+
+      <div class="oss-cards">
+        <div class="oss-card">
+          <h3>relixdev/relay</h3>
+          <p>The WebSocket relay that routes encrypted blobs between your machines and the mobile app. Self-hostable.</p>
+          <span class="oss-badge">MIT License</span>
+        </div>
+        <div class="oss-card">
+          <h3>relixdev/relixctl</h3>
+          <p>The CLI agent that discovers AI coding sessions, bridges them to the relay, and handles encryption.</p>
+          <span class="oss-badge">MIT License</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Pricing ============ -->
+  <section class="pricing section" id="pricing">
+    <div class="container text-center">
+      <p class="section-label">Pricing</p>
+      <h2 class="section-title">Start free, scale as you grow</h2>
+      <p class="section-subtitle mx-auto">Generous free tier. No credit card required.</p>
+
+      <div class="pricing-grid">
+        <!-- Free -->
+        <div class="pricing-card">
+          <div class="pricing-tier">Free</div>
+          <div class="pricing-price">$0</div>
+          <p class="pricing-desc">For getting started</p>
+          <ul class="pricing-features">
+            <li>1 machine</li>
+            <li>2 concurrent sessions</li>
+            <li>7-day session history</li>
+            <li>E2E encryption</li>
+            <li>Push notifications</li>
+          </ul>
+          <a href="#early-access" class="pricing-btn">Get Started</a>
+        </div>
+
+        <!-- Plus -->
+        <div class="pricing-card featured">
+          <div class="pricing-tier">Plus</div>
+          <div class="pricing-price">$4.99 <span>/mo</span></div>
+          <p class="pricing-desc">For daily users</p>
+          <ul class="pricing-features">
+            <li>3 machines</li>
+            <li>5 concurrent sessions</li>
+            <li>30-day session history</li>
+            <li>E2E encryption</li>
+            <li>Push notifications</li>
+          </ul>
+          <a href="#early-access" class="pricing-btn primary">Get Early Access</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="pricing-card">
+          <div class="pricing-tier">Pro</div>
+          <div class="pricing-price">$14.99 <span>/mo</span></div>
+          <p class="pricing-desc">For power users</p>
+          <ul class="pricing-features">
+            <li>10 machines</li>
+            <li>Unlimited sessions</li>
+            <li>90-day session history</li>
+            <li>Priority relay</li>
+            <li>E2E encryption</li>
+          </ul>
+          <a href="#early-access" class="pricing-btn">Get Early Access</a>
+        </div>
+
+        <!-- Team -->
+        <div class="pricing-card">
+          <div class="pricing-tier">Team</div>
+          <div class="pricing-price">$24.99 <span>/user/mo</span></div>
+          <p class="pricing-desc">For engineering teams</p>
+          <ul class="pricing-features">
+            <li>Unlimited machines</li>
+            <li>Shared sessions</li>
+            <li>Admin controls &amp; SSO</li>
+            <li>Audit log</li>
+            <li>99.9% uptime SLA</li>
+          </ul>
+          <a href="#early-access" class="pricing-btn">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq section" id="faq">
+    <div class="container text-center">
+      <p class="section-label">FAQ</p>
+      <h2 class="section-title">Frequently asked questions</h2>
+    </div>
+    <div class="container">
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">Does Relix see my code?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">No. The relay routes encrypted blobs. We can't read your session content even if compelled. All encryption and decryption happens on your machine and your phone.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Does it work with Claude's built-in Remote Control?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Relix is an alternative for users who want multi-tool support, multi-machine dashboards, and E2E encryption. It works alongside or instead of Anthropic's Remote Control.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What tools are supported?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Claude Code at launch. Aider and Cline within 2 weeks. Cursor and Continue.dev within 8 weeks. The adapter system is open source, so community adapters are welcome.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Can I self-host?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes. Run <code>docker run ghcr.io/relixdev/relay</code> and point your agent at it with <code>relixctl config set relay_url wss://your.server.com</code>. The relay is MIT-licensed.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What encryption does Relix use?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">NaCl box encryption with X25519 key exchange and XSalsa20-Poly1305 authenticated encryption. Keys are generated on your devices and never leave them. The relay only routes ciphertext.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Is there an annual discount?</button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Yes. Annual plans include 2 months free. Plus is $49.90/year, Pro is $149.90/year.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Early Access CTA ============ -->
+  <section class="early-access section" id="early-access">
+    <div class="container">
+      <div class="ea-content">
+        <h2>Get early access</h2>
+        <p>Be the first to know when Relix launches. Drop your email and we'll send you an invite.</p>
+        <form class="email-form" action="#" method="POST">
+          <input type="email" name="email" placeholder="you@dev.io" required autocomplete="email">
+          <button type="submit">Get Access</button>
+        </form>
+        <p class="ea-note">No spam. One email when we launch, that's it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo">
+            <div class="logo-icon">R</div>
+            Relix
+          </a>
+          <p>Command center for all your AI coding agents.</p>
+        </div>
+        <div class="footer-columns">
+          <div class="footer-col">
+            <h4>Product</h4>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#install">Install</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="https://github.com/relixdev" target="_blank" rel="noopener">GitHub</a></li>
+              <li><a href="https://github.com/relixdev/relay" target="_blank" rel="noopener">Relay Source</a></li>
+              <li><a href="https://github.com/relixdev/relixctl" target="_blank" rel="noopener">relixctl Source</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <ul>
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li><a href="/terms">Terms of Service</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 ShadowScale. All rights reserved.</span>
+        <span>relix.sh</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Minimal JS for FAQ toggles only -->
+  <script>
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = this.parentElement;
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+  </script>
+
+</body>
+</html>

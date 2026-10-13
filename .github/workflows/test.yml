@@ -1,12 +1,8 @@
 name: Test
 
+# Routine checks run locally. Hosted compatibility checks require an explicit run.
 on:
-  push:
-    branches: [main]
-    tags-ignore:
-      - "v*"
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   test-go:

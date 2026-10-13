@@ -36,6 +36,19 @@ Relix fixes that.
 - **🔔 Push Notifications** — "Approval needed: Edit src/auth.ts" straight to your phone
 - **🏠 Self-hostable** — MIT-licensed relay. Run it on your own infrastructure
 
+## Local checks
+
+The hosted Test workflow is disabled to conserve GitHub Actions capacity. Run routine checks locally from the repository root:
+
+```bash
+for module in protocol relay cloud relixctl; do
+  (cd "$module" && GOTOOLCHAIN=auto go test -race ./...) || exit
+done
+(cd mobile && npm ci && npx tsc --noEmit && npm test)
+```
+
+Use Go 1.22+ and Node.js 20+. For an explicit hosted compatibility check, enable Test in GitHub Actions, run it manually on `main`, then disable it again. Older branches can still contain automatic triggers. Tag-triggered Release remains unchanged.
+
 ## Quick Start
 
 ### Install the CLI
